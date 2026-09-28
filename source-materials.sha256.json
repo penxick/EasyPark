@@ -1,0 +1,302 @@
+[
+  {
+    "Path": "docs/figma-reference/ATTRIBUTIONS.md",
+    "Hash": "7EEF0ED2B6FB8A4D85C6217FBCBEBFDEDC8E4AC286D55920EA8DE35167BAA89F"
+  },
+  {
+    "Path": "docs/figma-reference/index.html",
+    "Hash": "6DB6DE9F5FC38415052C7F050154BC962643EE28CA6536C35F2F28E73661D6A7"
+  },
+  {
+    "Path": "docs/figma-reference/package.json",
+    "Hash": "8E7A945F73A94784744F436D8DFCBAC71B3EFD19394B62F8CF727F2121A73E08"
+  },
+  {
+    "Path": "docs/figma-reference/postcss.config.mjs",
+    "Hash": "349303A05D827EA4522A3D5DEB66C9BF0BAC566A53BC7ECD349CE1E45F1D6B8B"
+  },
+  {
+    "Path": "docs/figma-reference/README.md",
+    "Hash": "DE4CFCF77DC3F71729BFC99BC11306C41B597BCC6560D60A34E8E08791897D17"
+  },
+  {
+    "Path": "docs/figma-reference/vite.config.ts",
+    "Hash": "63B51B4DF207839DF79C5E43598DFBA46D78B14B8C6C3ABDEBE046C83E5C3FA5"
+  },
+  {
+    "Path": "docs/figma-reference/guidelines/Guidelines.md",
+    "Hash": "8A4A52A8FAC382F8B44D2F6B713E9643153BD1C732D34ED323D88CB290829257"
+  },
+  {
+    "Path": "docs/figma-reference/src/main.tsx",
+    "Hash": "31534914AD17A147A266479B0B43FA771E6B8B9E79C8D099333DBEC3F73E547C"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/App.tsx",
+    "Hash": "BA29D6316337D9048DF2CDE2FCCBCED5D37ED293EB191FCC2A446A96E2AD4D4C"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/Attributions.md",
+    "Hash": "D97C5014F6D3A35444AF4A7738F9D2B959106235E31EC75648DB4537D05ECED4"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/BookingDialog.tsx",
+    "Hash": "4ADC7213E3825AFC41DBD6DA252988A9B084FCAEA28B31EF7184CD8867BC20F4"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/DriverApp.tsx",
+    "Hash": "C59F114053684F081C71A7E52D38897E57CB1A7E46259250F359A027D98816D4"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/DriverProfile.tsx",
+    "Hash": "82CF07CA92FE73E85313AEF1372D7388BCEEC0E68546E8A29973BFCF190E50B8"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/LoginScreen.tsx",
+    "Hash": "5A7B48A5B6C53D384489AD98083098B706B3D7215C13437E8A3CCE41910ECD65"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/OperatorApp.tsx",
+    "Hash": "BC84B98BF5DEF338C9C053B1112579D35F6F124D534F85FB272C2F939213FB04"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ParkingList.tsx",
+    "Hash": "AC59FDA6F53FA7A136391853C914E2DDBAD66CAF21FCA076E42C2A290C500E11"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ParkingMap.tsx",
+    "Hash": "7192F11513CB19DDB82A27B707877B13DFBDDAEC1CE1C622B4CD63F96B2F6FBF"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ParkingMonitor.tsx",
+    "Hash": "5F3B056F143209B068BC52DA2BE4FE066F6031647C0921C9D2E8C38D0179E97D"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/RegisterScreen.tsx",
+    "Hash": "9737E7C7FD34F4685FEF99A3CE6853351634242F426D655FBDE962CC88582FCF"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/RevenueAnalytics.tsx",
+    "Hash": "C5FC818897BBC40439A55FEE3DB4BC616C344C96D1AED655B4D06A3694B70408"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/TariffSettings.tsx",
+    "Hash": "9FCB74268C4D0C91D387E63FE3A29A109C8FC5948FA304826719DF64892E2968"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/figma/ImageWithFallback.tsx",
+    "Hash": "79CAAF9D1736698C090823383F7B18A9496E9C1309A40F925C8AEB37E496BD8E"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/accordion.tsx",
+    "Hash": "66E9932F0D6E6549A4E5F9CA19B598DE543D57169B92683D8C36E882B9FB5EAE"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/alert-dialog.tsx",
+    "Hash": "24B3D921FCB763E5C9BD8247B977E63434BEE5D1A573C75285D91521D0F217EC"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/alert.tsx",
+    "Hash": "EDD46EAD892E5AF5938779FFD76278AB83E446C4991026EB0674EEEA8B6BB32E"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/aspect-ratio.tsx",
+    "Hash": "8FC396CBF60A3DA600EAFCC41CB9D722980EC880D8706D9F2AE908FF937B637C"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/avatar.tsx",
+    "Hash": "6A74018A10CD9D9270C4A76E2B7E0C4F3D63D484E6EA4D8B7115F35F1FCF0F2F"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/badge.tsx",
+    "Hash": "AA27CC5B25A2526050EEA8BCF464D9FE874940AFD048D7DFA22853E6CEBEF184"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/breadcrumb.tsx",
+    "Hash": "81BA2AA8763C32A29AD0B5BA717BCECF49ED5AE6F9BDB7E05CBDE7C3FFEA7E2E"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/button.tsx",
+    "Hash": "6A528F73E064ABC2160FCA019875FA9043780AF7C7EA83E42424D0A23346B96C"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/calendar.tsx",
+    "Hash": "E7F02E711231BB86C9D14F42485F97F8E16116630E49FB9D6D212384AAE1ED10"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/card.tsx",
+    "Hash": "AFC99CFA090791E394E68766095A4A86F5F6140521546B32D4B298061D72473F"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/carousel.tsx",
+    "Hash": "0B51F02FB790ECA406E4CF862980243D74C5D7F91DBCB10ED7210A6B6598FC0D"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/chart.tsx",
+    "Hash": "C9E44B09346A2B0A116F64EEDC4EA5C7A913FE9D97F6CDEFC1C3A40141E5F58E"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/checkbox.tsx",
+    "Hash": "359206E0C2EB2DD81FF72571A20B7B3028961C7A20F2EDC5BEB231D008F93299"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/collapsible.tsx",
+    "Hash": "D980CDF5C0A885672103971F70CA4D7630FB1231BC206485A575BA4B28EC57A1"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/command.tsx",
+    "Hash": "FD8A3841506E8F5EE850E4E8FE4A0381DFFD0A7DCCF893D69AD6CCCB8E0887B2"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/context-menu.tsx",
+    "Hash": "25A47951F76F24103E11966B444CDDD8233B4477114A26889870B225BC1B6C7D"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/dialog.tsx",
+    "Hash": "23F514185ACF6BC966191780202C825C801BDF07732AF186CA46C854D63DE6A8"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/drawer.tsx",
+    "Hash": "86B32AC9A12D92C0FA3EEE53BAD4F48C5A16324F6142666F44C41D2698869F8E"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/dropdown-menu.tsx",
+    "Hash": "6DA6AE67DF217465378CD887CD95DAE97E71164DE52B19077B3C7829A4AC86CC"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/form.tsx",
+    "Hash": "673C96C5484534D795A132A2CBC88AEE2865B9A65D4CC9FDDA27C5ACB3319258"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/hover-card.tsx",
+    "Hash": "A72DF230B56944E6AB0A8417C8BA1552AA1364212A76B1F2CE4BE92D7FAD0F80"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/input-otp.tsx",
+    "Hash": "8616FC830A1D78DC13AF54C31B388642C6199861F5A9429A799D7345E0C883CA"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/input.tsx",
+    "Hash": "CB82FFCD1A9ACCDF9B07EDC8E976F43AD1C9CF91968FFD7639DF5DF14B7AD407"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/label.tsx",
+    "Hash": "989E77F753A55CF0C1CF9C671B4D30A5E0A56208AB47E5A0311927AEEF695852"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/menubar.tsx",
+    "Hash": "4203FFDE3867B7DA6D546F4FD64CDCFB07A066E0D857734A1A52B16494026B94"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/navigation-menu.tsx",
+    "Hash": "B7F48E3B51D2CDD153696A55A9EE504B0DEE719BD570D9BCA4320BA613AFE27D"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/pagination.tsx",
+    "Hash": "BA344ADAA6585ECA3D62651F0FFF8F580D9D87B0EA1FC04E468BA50980094721"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/popover.tsx",
+    "Hash": "45405A1491662DDAACFA9AC5A6D3C3E56EDBFDCE2C35F3A3C3F717E4DB293C85"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/progress.tsx",
+    "Hash": "6D865C9DA5B1894127894DEDC351CBA548E460E4365A1176ABAAC998B52B9F23"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/radio-group.tsx",
+    "Hash": "ADED3C60E1604A83666895AF23907A7DBB64F9D18ADC0C9C1D68B8BAB65F8DC6"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/resizable.tsx",
+    "Hash": "058BAD52CAF2061471CD1B7465EA26F995C9DB3C8F2A94307F6A7F24CFADD67A"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/scroll-area.tsx",
+    "Hash": "7835A603B0446A8B6C2100982D14C82A3593111C30691039A7F5EB72B3F3FD4E"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/select.tsx",
+    "Hash": "7F879053C7E66C5A8CEC457744FE8F56FF3AB0656F326C87CD722820C266E03D"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/separator.tsx",
+    "Hash": "4802A5B0E7473753B43E183283E9B28F9640EB86CE08EECBFC4558C67FDF62CE"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/sheet.tsx",
+    "Hash": "9D4E5F54B9E701934F4B8A4B1D9A397153F759A76B2E548B06CE03CF9FE2BB2A"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/sidebar.tsx",
+    "Hash": "020C20EB6ABDD9F63B3790AA455B5F622352F444ABB8FE5527AFBEF678B7979D"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/skeleton.tsx",
+    "Hash": "7FD5D7F3EA479C3C1AE7BE79BDBAF84C87647333768F70D396CD84580535D485"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/slider.tsx",
+    "Hash": "B3039AB946659BE6AA7848942BBFCF0299E596AF62500159C5E78D1A6D2D15F8"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/sonner.tsx",
+    "Hash": "B172102EB6048C1B51A9522A5D254C0187CE8B2F0086F1C7C97E93B8575400C6"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/switch.tsx",
+    "Hash": "DB4B78B91F41DB6726F8D49F91FA39A0AA1F93095C3E0AEACD604828A4368A50"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/table.tsx",
+    "Hash": "E4EC7D3BE042EFD0FA363A57DD0E649A7831B86F975D4EC5192EBBFDD66E0F95"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/tabs.tsx",
+    "Hash": "21BD1D39CF27DE51405064B0A585D8E16D0952E95BA8C13AFE16B430E8B7F253"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/textarea.tsx",
+    "Hash": "6C3127C28BA1DDA0428BA286A9E291C52AD95BFC8ACD10518B262B71E470F3E7"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/toggle-group.tsx",
+    "Hash": "1BBE68BEFF80A51F9BF7925CDDE13E41F2771EF4944F6AD27E6D5B75AD07A2A2"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/toggle.tsx",
+    "Hash": "BC92455A46CA664BA08007892C373013B7D9EE2A8398D6CA8D347A0FA2842174"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/tooltip.tsx",
+    "Hash": "4A0424D434F0E67CD51AC5D593DDEB6A1959B63D22BA9748E1FEE788B94756AB"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/use-mobile.ts",
+    "Hash": "738D8E4520EDECA7CAA2CA56A4923839E30BE14A00FC32B5A770F5D5B451A63E"
+  },
+  {
+    "Path": "docs/figma-reference/src/app/components/ui/utils.ts",
+    "Hash": "D1F1E0D62CB8D8D1E04C26E14DE842D8A151F75812D81B046C65B5D1FE8E4B27"
+  },
+  {
+    "Path": "docs/figma-reference/src/assets/8c061ed90e1159eb53e3706b49f6d13552854bd4.png",
+    "Hash": "ABB58A43A08DFF7818944729FB45F8F3A7A30F11F799E6DA296F79B0181DDD86"
+  },
+  {
+    "Path": "docs/figma-reference/src/styles/default_theme.css",
+    "Hash": "F73639F871AAEF999BAB64F3E5E5C56FB94303C97AC02F94B821464D0E2346DC"
+  },
+  {
+    "Path": "docs/figma-reference/src/styles/globals.css",
+    "Hash": "511C2E16DD42E508BA93BAD3C3D90F27677CF5FBDD2BA50ACD8623FE27C2454B"
+  },
+  {
+    "Path": "docs/figma-reference/src/styles/index.css",
+    "Hash": "3E7233EBEBD8F861F376A92D78FAA9AE70F054D6BDED7396720B233CFD9B7F18"
+  },
+  {
+    "Path": "docs/tz/TZ_EasyPark.md",
+    "Hash": "601EF9F4CCF39C816C6803295C5CADABD674FD7909A8EDE40137039DF7AE87B7"
+  }
+]

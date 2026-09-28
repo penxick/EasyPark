@@ -1,0 +1,11 @@
+.venv
+__pycache__
+.pytest_cache
+.ruff_cache
+tests
+weights
+models
+Dockerfile.test
+*.pyc
+*.log
+.env*

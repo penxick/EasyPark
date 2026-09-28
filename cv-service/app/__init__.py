@@ -1,0 +1,1 @@
+"""EasyPark CV service package."""

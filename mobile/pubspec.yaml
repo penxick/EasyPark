@@ -1,0 +1,29 @@
+name: easypark
+description: EasyPark mobile application. Flutter foundation.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.10.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_map: ^8.3.2
+  flutter_secure_storage: ^11.2.0
+  go_router: ^17.5.0
+  http: ^1.6.0
+  latlong2: ^0.10.1
+  lucide_icons_flutter: ^3.1.20
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  integration_test:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+

@@ -1,0 +1,8 @@
+FROM easypark-cv-service
+USER root
+COPY requirements-dev.txt ./requirements-dev.txt
+RUN pip install --no-cache-dir -r requirements-dev.txt
+COPY tests ./tests
+COPY tools ./tools
+COPY pyproject.toml ./pyproject.toml
+CMD ["python", "-m", "pytest", "-q", "-p", "no:cacheprovider"]

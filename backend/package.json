@@ -1,0 +1,46 @@
+{
+  "name": "easypark-backend",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "^22.13.0 || >=24.0.0"
+  },
+  "scripts": {
+    "build": "nest build",
+    "start": "node dist/main.js",
+    "start:dev": "nest start --watch",
+    "seed": "node dist/database/seed.js",
+    "migration:run": "node dist/database/migrate.js",
+    "test:docker": "node test/docker-auth-smoke.cjs",
+    "format": "prettier --write src test *.json *.mjs",
+    "format:check": "prettier --check src test *.json *.mjs",
+    "lint": "eslint src test eslint.config.mjs",
+    "test": "npm run build && node --test test/*.test.cjs",
+    "test:integration": "npm run build && node --test test/integration/*.test.cjs"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.4",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/jwt": "^12.0.2",
+    "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/throttler": "^6.7.1",
+    "@nestjs/typeorm": "^11.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "pg": "^8.23.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "typeorm": "^0.3.31"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@nestjs/cli": "^11.0.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^10.11.0",
+    "globals": "^16.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.0.0"
+  }
+}
