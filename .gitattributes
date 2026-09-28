@@ -1,0 +1,3 @@
+# Preserve the supplied source materials byte-for-byte across platforms.
+docs/tz/** -text
+docs/figma-reference/** -text
