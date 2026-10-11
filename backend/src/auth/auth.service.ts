@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { User, publicUser } from '../users/user.entity';
@@ -20,13 +24,16 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await this.users.findForLogin(dto.email);
+    if ((dto.email === undefined) === (dto.login === undefined)) {
+      throw new BadRequestException('Укажите логин или email в одном поле.');
+    }
+    const user = await this.users.findForLogin((dto.login ?? dto.email)!);
     const valid = await this.passwords.verify(
       dto.password,
       user?.passwordHash ?? DUMMY_PASSWORD_HASH,
     );
     if (!user || !valid)
-      throw new UnauthorizedException('Неверный email или пароль.');
+      throw new UnauthorizedException('Неверный логин, email или пароль.');
     return this.session(user);
   }
 

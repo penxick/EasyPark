@@ -88,7 +88,7 @@ void main() {
       addTearDown(auth.dispose);
       await auth.restore();
       for (final entry in {
-        401: 'Неверный email или пароль.',
+        401: 'Неверный логин, email или пароль.',
         409: 'Пользователь с таким email уже существует.',
         429: 'Слишком много попыток.',
       }.entries) {

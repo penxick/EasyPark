@@ -86,6 +86,7 @@ class ApiClient {
         throw ApiException(
           _httpError(response.statusCode),
           statusCode: response.statusCode,
+          code: _publicErrorCode(response),
         );
       }
       if (response.statusCode == 204 || response.bodyBytes.isEmpty) return null;
@@ -136,6 +137,22 @@ class ApiClient {
     >= 400 => ApiErrorKind.validation,
     _ => ApiErrorKind.invalidResponse,
   };
+
+  static String? _publicErrorCode(http.Response response) {
+    try {
+      final body = jsonDecode(utf8.decode(response.bodyBytes));
+      final code = body is Map ? body['code'] : null;
+      const allowed = {
+        'SPACE_CODE_EXISTS',
+        'SPACE_HAS_RESERVATIONS',
+        'SPACE_HAS_RELATED_DATA',
+        'SPACE_BUSY',
+      };
+      return code is String && allowed.contains(code) ? code : null;
+    } catch (_) {
+      return null;
+    }
+  }
 
   /// The client owns its transport, including one provided via the constructor.
   void close() => _client.close();

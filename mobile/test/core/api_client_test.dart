@@ -52,6 +52,7 @@ void main() {
     () async {
       var invalidations = 0;
       final api = ApiClient(
+        config: ApiConfig(baseUrl: 'https://example.test/api/'),
         tokenProvider: TestTokens(),
         onUnauthorized: () async {
           invalidations++;
@@ -78,6 +79,7 @@ void main() {
 
   test('session callback failure cannot hide HTTP 401', () async {
     final api = ApiClient(
+      config: ApiConfig(baseUrl: 'https://example.test/api/'),
       tokenProvider: TestTokens(),
       onUnauthorized: () async => throw StateError('storage failed'),
       client: MockClient((_) async => http.Response('', 401)),
@@ -99,6 +101,7 @@ void main() {
   }.entries) {
     test('HTTP ${entry.key} maps to safe error', () async {
       final api = ApiClient(
+        config: ApiConfig(baseUrl: 'https://example.test/api/'),
         client: MockClient(
           (_) async => http.Response('private error', entry.key),
         ),
@@ -111,6 +114,7 @@ void main() {
   test('PATCH and DELETE support an empty 204 response', () async {
     final methods = <String>[];
     final api = ApiClient(
+      config: ApiConfig(baseUrl: 'https://example.test/api/'),
       client: MockClient((request) async {
         methods.add(request.method);
         return http.Response('', 204);
@@ -124,6 +128,7 @@ void main() {
 
   test('malformed success response becomes invalidResponse', () async {
     final api = ApiClient(
+      config: ApiConfig(baseUrl: 'https://example.test/api/'),
       client: MockClient((_) async => http.Response('<html>', 200)),
     );
     addTearDown(api.close);
@@ -135,6 +140,7 @@ void main() {
 
   test('transport errors and timeouts are normalized', () async {
     final broken = ApiClient(
+      config: ApiConfig(baseUrl: 'https://example.test/api/'),
       client: MockClient((_) async => throw http.ClientException('secret URL')),
     );
     final slow = ApiClient(
@@ -161,6 +167,7 @@ void main() {
 
   test('foreign URLs and traversal are rejected before transport', () async {
     final api = ApiClient(
+      config: ApiConfig(baseUrl: 'https://example.test/api/'),
       client: MockClient((_) async => fail('must not send')),
     );
     addTearDown(api.close);
@@ -180,6 +187,7 @@ void main() {
 
   test('invalid configuration is rejected', () {
     for (final url in [
+      '',
       'not a url',
       'ftp://server/api',
       'https://user:pass@host/api',

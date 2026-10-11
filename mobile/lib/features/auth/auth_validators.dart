@@ -1,4 +1,11 @@
 abstract final class AuthValidators {
+  static String? login(String? value) {
+    final identifier = (value ?? '').trim();
+    return identifier.isEmpty || identifier.length > 254
+        ? 'Введите логин или email (до 254 символов).'
+        : null;
+  }
+
   static String? name(String? value) {
     final length = (value ?? '').trim().runes.length;
     return length < 1 || length > 100

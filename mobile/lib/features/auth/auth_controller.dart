@@ -33,6 +33,7 @@ class AuthController extends ChangeNotifier {
   bool _disposed = false;
   bool _logoutRequested = false;
   bool get logoutPending => _logoutRequested;
+  bool get isAdmin => status == AuthStatus.signedIn && user?.role == 'ADMIN';
   int _generation = 0;
 
   void _notify() {
@@ -82,8 +83,20 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  Future<void> login(String email, String password) =>
-      _authenticate(() => repository.login(email, password));
+  Future<void> login(String identifier, String password) =>
+      _authenticate(() => repository.login(identifier, password));
+
+  /// Revalidate a role without restarting the router or creating a 403 retry loop.
+  Future<void> refreshIdentity() async {
+    if (busy || _disposed || status != AuthStatus.signedIn) return;
+    final generation = _generation;
+    final current = await repository.me();
+    if (_current(generation) && status == AuthStatus.signedIn) {
+      user = current;
+      _notify();
+    }
+  }
+
   Future<void> register(String name, String email, String password) =>
       _authenticate(() => repository.register(name, email, password));
 
@@ -106,7 +119,7 @@ class AuthController extends ChangeNotifier {
       error =
           exception is ApiException &&
               exception.kind == ApiErrorKind.unauthorized
-          ? 'Неверный email или пароль.'
+          ? 'Неверный логин, email или пароль.'
           : _message(exception);
     } finally {
       if (_current(generation)) {

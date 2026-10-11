@@ -28,12 +28,30 @@ export function validateEnvironment(config: Record<string, unknown>) {
     );
   }
   const ttl = String(config.JWT_TTL_SECONDS ?? 604800);
+  const adminLogin = requiredText(config, 'ADMIN_LOGIN').trim().toLowerCase();
+  if (!/^[a-z][a-z0-9_.-]{0,63}$/.test(adminLogin)) {
+    throw new Error(
+      'ADMIN_LOGIN must contain 1..64 ASCII letters, digits, dot, underscore or hyphen and start with a letter',
+    );
+  }
+  const adminPassword = requiredText(config, 'ADMIN_PASSWORD');
+  if (
+    adminPassword.length < 12 ||
+    adminPassword.length > 128 ||
+    /change.?me|replace|example/i.test(adminPassword)
+  ) {
+    throw new Error(
+      'ADMIN_PASSWORD must contain 12..128 characters and must not be a placeholder',
+    );
+  }
   if (!/^\d+$/.test(ttl) || Number(ttl) < 60 || Number(ttl) > 2592000) {
     throw new Error(
       'JWT_TTL_SECONDS must be an integer between 60 and 2592000',
     );
   }
   return {
+    ADMIN_LOGIN: adminLogin,
+    ADMIN_PASSWORD: adminPassword,
     JWT_SECRET: secret,
     JWT_TTL_SECONDS: Number(ttl),
     PORT: port(config.PORT ?? config.BACKEND_PORT ?? 3000, 'PORT'),

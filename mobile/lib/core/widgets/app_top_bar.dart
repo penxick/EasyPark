@@ -3,10 +3,17 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../theme/app_tokens.dart';
 
 class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
-  const AppTopBar({super.key, required this.title, this.onBack, this.actions});
+  const AppTopBar({
+    super.key,
+    required this.title,
+    this.onBack,
+    this.actions,
+    this.leading,
+  });
   final String title;
   final VoidCallback? onBack;
   final List<Widget>? actions;
+  final Widget? leading;
 
   @override
   Size get preferredSize => const Size.fromHeight(64);
@@ -15,14 +22,16 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) => AppBar(
     toolbarHeight: 64,
     automaticallyImplyLeading: false,
-    leading: onBack == null
-        ? null
-        : IconButton(
-            tooltip: 'Назад',
-            icon: const Icon(LucideIcons.arrowLeft, size: 20),
-            onPressed: onBack,
-          ),
-    titleSpacing: onBack == null ? AppSpacing.lg : 0,
+    leading:
+        leading ??
+        (onBack == null
+            ? null
+            : IconButton(
+                tooltip: 'Назад',
+                icon: const Icon(LucideIcons.arrowLeft, size: 20),
+                onPressed: onBack,
+              )),
+    titleSpacing: onBack == null && leading == null ? AppSpacing.lg : 0,
     title: Text(
       title,
       maxLines: 1,

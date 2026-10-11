@@ -8,4 +8,6 @@ abstract final class AppRoutes {
   static const space = '/space/:id';
   static const reservations = '/reservations';
   static const profile = '/profile';
+  static const admin = '/admin';
+  static const accessDenied = '/access-denied';
 }

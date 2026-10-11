@@ -8,6 +8,7 @@ import { DatabaseModule } from './database/database.module';
 import { HealthController } from './health.controller';
 import { AuthModule } from './auth/auth.module';
 import { ReservationsModule } from './reservations/reservations.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ReservationsModule } from './reservations/reservations.module';
     ParkingModule,
     ParkingSpacesModule,
     ReservationsModule,
+    AdminModule,
   ],
   controllers: [HealthController],
 })

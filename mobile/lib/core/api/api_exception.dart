@@ -12,10 +12,11 @@ enum ApiErrorKind {
 }
 
 class ApiException implements Exception {
-  const ApiException(this.kind, {this.statusCode});
+  const ApiException(this.kind, {this.statusCode, this.code});
 
   final ApiErrorKind kind;
   final int? statusCode;
+  final String? code;
 
   String get message => switch (kind) {
     ApiErrorKind.unauthorized => 'Необходимо войти в аккаунт.',

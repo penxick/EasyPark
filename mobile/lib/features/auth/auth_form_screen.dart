@@ -80,7 +80,7 @@ class _AuthFormScreenState extends State<AuthFormScreen> {
                     Text(
                       registration
                           ? 'Создайте новый аккаунт для использования EasyPark'
-                          : 'Введите ваш email и пароль для продолжения',
+                          : 'Введите логин или email и пароль для продолжения',
                       textAlign: TextAlign.center,
                       style: AppTypography.small.copyWith(
                         color: AppColors.mutedForeground,
@@ -103,13 +103,19 @@ class _AuthFormScreenState extends State<AuthFormScreen> {
                     ],
                     AppTextField(
                       key: const ValueKey('auth-email'),
-                      label: 'Email',
+                      label: registration ? 'Email' : 'Логин / Email',
                       labelIcon: LucideIcons.mail,
                       controller: _email,
-                      hintText: 'example@mail.ru',
+                      hintText: registration
+                          ? 'example@mail.ru'
+                          : 'Логин или example@mail.ru',
                       enabled: !busy,
-                      validator: AuthValidators.email,
-                      keyboardType: TextInputType.emailAddress,
+                      validator: registration
+                          ? AuthValidators.email
+                          : AuthValidators.login,
+                      keyboardType: registration
+                          ? TextInputType.emailAddress
+                          : TextInputType.text,
                       textInputAction: TextInputAction.next,
                       autofillHints: const [
                         AutofillHints.username,

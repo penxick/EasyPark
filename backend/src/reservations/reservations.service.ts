@@ -17,12 +17,63 @@ import {
 import { Parking } from '../parking/parking.entity';
 import { Reservation, ReservationStatus } from './reservation.entity';
 import { CreateReservationDto } from './reservation.dto';
+import {
+  AdminReservationsQueryDto,
+  pageResult,
+  ReservationCategory,
+} from '../admin/admin-query.dto';
+import {
+  adminReservation,
+  adminReservationQuery,
+  AdminReservationRow,
+  adminReservationStatus,
+} from './admin-reservation.projection';
 
 const live = [ReservationStatus.ACTIVE, ReservationStatus.PENDING];
 
 @Injectable()
 export class ReservationsService {
   constructor(private readonly db: DataSource) {}
+
+  async adminList(query: AdminReservationsQueryDto, userId?: number) {
+    return this.db.transaction('REPEATABLE READ', async (manager) => {
+      const builder = adminReservationQuery(manager, new Date());
+      if (userId !== undefined)
+        builder.andWhere('reservation.userId = :userId', { userId });
+      const categories = {
+        [ReservationCategory.ACTIVE]: [
+          ReservationStatus.ACTIVE,
+          ReservationStatus.PENDING,
+        ],
+        [ReservationCategory.COMPLETED]: [
+          ReservationStatus.COMPLETED,
+          ReservationStatus.EXPIRED,
+        ],
+        [ReservationCategory.CANCELLED]: [ReservationStatus.CANCELLED],
+      };
+      if (query.category !== ReservationCategory.ALL) {
+        builder.andWhere(`(${adminReservationStatus}) IN (:...statuses)`, {
+          statuses: categories[query.category],
+        });
+      }
+      const total = await builder.getCount();
+      const rows = await builder
+        .orderBy('reservation.createdAt', 'DESC')
+        .addOrderBy('reservation.id', 'DESC')
+        .offset((query.page - 1) * query.pageSize)
+        .limit(query.pageSize)
+        .getRawMany<AdminReservationRow>();
+      return pageResult(rows.map(adminReservation), total, query);
+    });
+  }
+
+  async adminDetails(id: number) {
+    const row = await adminReservationQuery(this.db.manager, new Date())
+      .where('reservation.id = :id', { id })
+      .getRawOne<AdminReservationRow>();
+    if (!row) throw new NotFoundException('Бронирование не найдено.');
+    return adminReservation(row);
+  }
 
   // Every mutation takes the space lock first, then changes its reservations.
   private lockSpace(manager: EntityManager, id: number) {
@@ -47,7 +98,12 @@ export class ReservationsService {
     await manager.save(space);
   }
 
-  private async expire(manager: EntityManager, space: ParkingSpace, now: Date) {
+  // Caller must hold the space's pessimistic write lock in this transaction.
+  async expireLockedSpace(
+    manager: EntityManager,
+    space: ParkingSpace,
+    now: Date,
+  ) {
     const ended = await manager.findBy(Reservation, {
       parkingSpaceId: space.id,
       status: In(live),
@@ -69,7 +125,7 @@ export class ReservationsService {
         const space = await this.lockSpace(manager, dto.parkingSpaceId);
         if (!space) throw new NotFoundException('Место не найдено.');
         const now = new Date();
-        await this.expire(manager, space, now);
+        await this.expireLockedSpace(manager, space, now);
         if (
           space.status !== ParkingSpaceStatus.FREE ||
           space.physicalOccupied ||
@@ -138,7 +194,7 @@ export class ReservationsService {
     const result = await this.db.transaction(async (manager) => {
       const space = await this.lockSpace(manager, found.parkingSpaceId);
       if (!space) throw new NotFoundException('Место не найдено.');
-      await this.expire(manager, space, new Date());
+      await this.expireLockedSpace(manager, space, new Date());
       const reservation = await manager.findOneByOrFail(Reservation, {
         id,
         userId,
@@ -159,7 +215,7 @@ export class ReservationsService {
   private async expireSpace(id: number) {
     await this.db.transaction(async (manager) => {
       const space = await this.lockSpace(manager, id);
-      if (space) await this.expire(manager, space, new Date());
+      if (space) await this.expireLockedSpace(manager, space, new Date());
     });
   }
 

@@ -26,6 +26,8 @@ services:
       DB_HOST: postgres
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       JWT_TTL_SECONDS: ${JWT_TTL_SECONDS:-604800}
+      ADMIN_LOGIN: ${ADMIN_LOGIN:?Set ADMIN_LOGIN in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
       POSTGRES_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB:-easypark}
       POSTGRES_USER: ${POSTGRES_USER:-easypark}

@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CreateUsers1789776000000 } from './migrations/1789776000000-create-users';
 import { CreateReservations1790640000000 } from './migrations/1790640000000-create-reservations';
+import { AddUserLogin1791331200000 } from './migrations/1791331200000-add-user-login';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CreateReservations1790640000000 } from './migrations/1790640000000-crea
           CreateParkings1790380800000,
           CreateParkingSpaces1790553600000,
           CreateReservations1790640000000,
+          AddUserLogin1791331200000,
         ],
         retryAttempts: 3,
         retryDelay: 1000,

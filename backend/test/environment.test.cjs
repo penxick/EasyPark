@@ -6,7 +6,34 @@ const valid = {
   POSTGRES_USER: 'tester',
   POSTGRES_PASSWORD: 'test-secret',
   JWT_SECRET: 'a'.repeat(64),
+  ADMIN_LOGIN: 'admin',
+  ADMIN_PASSWORD: 'test-only-password-123',
 };
+
+test('administrator settings reject invalid logins and placeholder passwords', () => {
+  for (const login of ['', 'a@b.com', 'with space', 'a'.repeat(65), '1admin']) {
+    assert.throws(
+      () => validateEnvironment({ ...valid, ADMIN_LOGIN: login }),
+      /ADMIN_LOGIN/,
+    );
+  }
+  for (const password of [
+    undefined,
+    '',
+    'change_me',
+    'short',
+    'a'.repeat(129),
+  ]) {
+    assert.throws(
+      () => validateEnvironment({ ...valid, ADMIN_PASSWORD: password }),
+      /ADMIN_PASSWORD/,
+    );
+  }
+  assert.equal(
+    validateEnvironment({ ...valid, ADMIN_LOGIN: ' ADMIN ' }).ADMIN_LOGIN,
+    'admin',
+  );
+});
 
 test('environment defaults, numeric ports and explicit PORT precedence', () => {
   const config = validateEnvironment({ ...valid, BACKEND_PORT: '3100' });

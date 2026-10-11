@@ -15,6 +15,11 @@ export enum UserRole {
 
 @Entity('users')
 @Index('UQ_users_email', ['email'], { unique: true })
+@Index('UQ_users_login', ['login'], { unique: true })
+@Check(
+  'CHK_users_login_format',
+  '"login" IS NULL OR "login" ~ \'^[a-z][a-z0-9_.-]{0,63}$\'',
+)
 @Check('CHK_users_email_normalized', '"email" = lower(btrim("email"))')
 @Check('CHK_users_role', "\"role\" IN ('USER', 'ADMIN')")
 export class User {
@@ -26,6 +31,9 @@ export class User {
 
   @Column({ type: 'varchar', length: 254 })
   email!: string;
+
+  @Column({ type: 'varchar', length: 64, nullable: true })
+  login!: string | null;
 
   @Column({ type: 'varchar', length: 255, select: false })
   passwordHash!: string;

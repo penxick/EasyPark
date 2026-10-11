@@ -104,6 +104,7 @@ test(
               'code',
               'status',
               'physicalOccupied',
+              'hasActiveReservation',
               'x',
               'y',
               'polygon',

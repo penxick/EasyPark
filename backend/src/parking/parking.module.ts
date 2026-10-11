@@ -8,6 +8,7 @@ import { ParkingController } from './parking.controller';
 @Module({
   imports: [TypeOrmModule.forFeature([Parking]), AuthModule],
   providers: [ParkingService],
+  exports: [ParkingService],
   controllers: [ParkingController],
 })
 export class ParkingModule {}

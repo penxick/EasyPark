@@ -1,3 +1,4 @@
+import 'package:easypark/core/constants/api_config.dart';
 import 'dart:async';
 import 'package:easypark/app.dart';
 import 'package:easypark/core/api/api_client.dart';
@@ -17,6 +18,22 @@ import 'support/map_fixture.dart';
 import 'support/parking_spaces_fixture.dart';
 
 void main() {
+  test(
+    'space model accepts the extended reservation flag without changing USER behavior',
+    () {
+      final reserved = ParkingSpace.fromJson({
+        ...spaceJson(1, 'RESERVED'),
+        'hasActiveReservation': true,
+      });
+      expect(reserved.displayStatus, SpaceStatus.reserved);
+      expect(reserved.selectable, false);
+      final free = ParkingSpace.fromJson({
+        ...spaceJson(2, 'FREE'),
+        'hasActiveReservation': false,
+      });
+      expect(free.selectable, true);
+    },
+  );
   test('space status, physical occupancy and external geometry validation', () {
     expect(ParkingSpace.fromJson(spaceJson(1, 'FREE')).selectable, true);
     expect(
@@ -46,6 +63,7 @@ void main() {
       Object? payload = testSpacesJson;
       var calls = 0;
       final api = ApiClient(
+        config: ApiConfig(baseUrl: 'https://example.test/api/'),
         tokenProvider: MemoryTokens('jwt'),
         client: MockClient((request) async {
           calls++;

@@ -8,6 +8,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { PasswordService } from './password.service';
+import { RoleGuard } from './role.guard';
+import { AdminBootstrapService } from './admin-bootstrap.service';
 
 export const JWT_ISSUER = 'easypark-backend';
 export const JWT_AUDIENCE = 'easypark-mobile';
@@ -35,7 +37,19 @@ export const JWT_AUDIENCE = 'easypark-mobile';
     }),
   ],
   controllers: [AuthController, UsersController],
-  providers: [AuthService, PasswordService, JwtAuthGuard],
-  exports: [JwtAuthGuard, JwtModule, UsersModule],
+  providers: [
+    AuthService,
+    PasswordService,
+    JwtAuthGuard,
+    RoleGuard,
+    AdminBootstrapService,
+  ],
+  exports: [
+    JwtAuthGuard,
+    RoleGuard,
+    JwtModule,
+    UsersModule,
+    AdminBootstrapService,
+  ],
 })
 export class AuthModule {}

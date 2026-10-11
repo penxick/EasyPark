@@ -14,6 +14,7 @@ import { ReservationExpiryWorker } from './reservation-expiry.worker';
     TypeOrmModule.forFeature([Reservation, ParkingSpace, Parking]),
   ],
   providers: [ReservationsService, ReservationExpiryWorker],
+  exports: [ReservationsService],
   controllers: [ReservationsController],
 })
 export class ReservationsModule {}

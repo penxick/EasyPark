@@ -14,11 +14,16 @@ class ParkingMap extends StatefulWidget {
     required this.onSelect,
     required this.onRefresh,
     this.tileProviderFactory,
+    this.onPick,
+    this.selectedPoint,
+    this.initialPoint,
   });
   final List<Parking> parkings;
   final ValueChanged<Parking> onSelect;
   final VoidCallback onRefresh;
   final TileProvider Function()? tileProviderFactory;
+  final ValueChanged<LatLng>? onPick;
+  final LatLng? selectedPoint, initialPoint;
   @override
   State<ParkingMap> createState() => _ParkingMapState();
 }
@@ -39,7 +44,12 @@ class _ParkingMapState extends State<ParkingMap> {
   List<LatLng> get _points =>
       widget.parkings.map((p) => LatLng(p.latitude, p.longitude)).toList();
   CameraFit get _fit => CameraFit.bounds(
-    bounds: LatLngBounds.fromPoints(_points),
+    bounds: LatLngBounds.fromPoints([
+      ..._points,
+      if (widget.selectedPoint != null) widget.selectedPoint!,
+      if (_points.isEmpty && widget.selectedPoint == null)
+        widget.initialPoint ?? const LatLng(56.01, 92.87),
+    ]),
     padding: const EdgeInsets.all(64),
     maxZoom: 15,
   );
@@ -120,8 +130,21 @@ class _ParkingMapState extends State<ParkingMap> {
             FlutterMap(
               mapController: _map,
               options: MapOptions(
-                initialCenter: _points.first,
-                initialCameraFit: _fit,
+                initialCenter:
+                    widget.initialPoint ??
+                    (_points.isEmpty
+                        ? const LatLng(56.01, 92.87)
+                        : _points.first),
+                initialZoom: 15,
+                initialCameraFit: widget.initialPoint == null ? _fit : null,
+                onTap: widget.onPick == null
+                    ? null
+                    : (_, point) => widget.onPick!(
+                        LatLng(
+                          point.latitude.clamp(-90, 90),
+                          ((point.longitude + 180) % 360) - 180,
+                        ),
+                      ),
                 minZoom: 2,
                 maxZoom: 19,
                 interactionOptions: const InteractionOptions(
@@ -157,7 +180,14 @@ class _ParkingMapState extends State<ParkingMap> {
                               child: InkWell(
                                 key: ValueKey('parking-marker-${parking.id}'),
                                 customBorder: const CircleBorder(),
-                                onTap: () => widget.onSelect(parking),
+                                onTap: () => widget.onPick != null
+                                    ? widget.onPick!(
+                                        LatLng(
+                                          parking.latitude,
+                                          parking.longitude,
+                                        ),
+                                      )
+                                    : widget.onSelect(parking),
                                 child: const Center(
                                   child: ExcludeSemantics(
                                     child: Icon(
@@ -169,6 +199,20 @@ class _ParkingMapState extends State<ParkingMap> {
                                 ),
                               ),
                             ),
+                          ),
+                        ),
+                      ),
+                    if (widget.selectedPoint != null)
+                      Marker(
+                        point: widget.selectedPoint!,
+                        width: 48,
+                        height: 48,
+                        child: const IgnorePointer(
+                          child: Icon(
+                            Icons.location_pin,
+                            key: ValueKey('selected-parking-point'),
+                            size: 48,
+                            color: AppColors.destructive,
                           ),
                         ),
                       ),

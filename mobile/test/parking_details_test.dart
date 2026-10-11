@@ -1,3 +1,4 @@
+import 'package:easypark/core/constants/api_config.dart';
 import 'dart:async';
 import 'package:easypark/app.dart';
 import 'package:easypark/core/api/api_client.dart';
@@ -46,6 +47,7 @@ void main() {
       }
       var requests = 0;
       final api = ApiClient(
+        config: ApiConfig(baseUrl: 'https://example.test/api/'),
         tokenProvider: MemoryTokens('jwt'),
         client: MockClient((request) async {
           requests++;

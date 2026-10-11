@@ -117,7 +117,7 @@ class _TracingClient extends http.BaseClient {
     if (request is http.Request && request.url.path.endsWith('/auth/login')) {
       final body = jsonDecode(request.body) as Map<String, dynamic>;
       checks.add(
-        'email matches: ${body['email'] == email}, password matches: ${body['password'] == password}',
+        'email matches: ${body['login'] == email}, password matches: ${body['password'] == password}',
       );
       debugPrint('Auth test request checks: $checks');
     }

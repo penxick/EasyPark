@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:easypark/core/api/api_client.dart';
+import 'package:easypark/core/constants/api_config.dart';
 import 'package:easypark/core/storage/token_storage.dart';
 import 'package:easypark/features/auth/auth_controller.dart';
 import 'package:easypark/features/auth/auth_repository.dart';
@@ -49,6 +50,7 @@ AuthController fixture({
   final storage = tokens ?? MemoryTokens();
   late final AuthController controller;
   final api = ApiClient(
+    config: ApiConfig(baseUrl: 'https://example.test/api/'),
     tokenProvider: storage,
     onUnauthorized: () => controller.invalidate(),
     client: MockClient(handler ?? (_) async => jsonResponse(testUser)),

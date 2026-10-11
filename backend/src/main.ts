@@ -3,11 +3,18 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { configureApp } from './setup';
+import { AdminBootstrapService } from './auth/admin-bootstrap.service';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   configureApp(app);
   app.enableShutdownHooks();
+  try {
+    await app.get(AdminBootstrapService).ensureAdmin();
+  } catch (error) {
+    await app.close();
+    throw error;
+  }
   await app.listen(
     app.get(ConfigService).getOrThrow<number>('PORT'),
     '0.0.0.0',

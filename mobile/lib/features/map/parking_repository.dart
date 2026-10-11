@@ -6,6 +6,18 @@ import '../parking/parking_details.dart';
 class ParkingRepository {
   const ParkingRepository(this.api);
   final ApiClient api;
+  Future<List<ParkingDetails>> fetchAllDetails() async {
+    final response = await api.get('parkings');
+    if (response is! List) {
+      throw const ApiException(ApiErrorKind.invalidResponse);
+    }
+    final items = response.map(ParkingDetails.fromJson).toList(growable: false);
+    if (items.map((p) => p.parking.id).toSet().length != items.length) {
+      throw const ApiException(ApiErrorKind.invalidResponse);
+    }
+    return List.unmodifiable(items);
+  }
+
   Future<ParkingDetails> fetchOne(String id) async {
     if (!RegExp(r'^[1-9]\d*$').hasMatch(id) ||
         (int.tryParse(id) ?? 2147483648) > 2147483647) {

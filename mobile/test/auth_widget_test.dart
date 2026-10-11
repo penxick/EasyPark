@@ -27,7 +27,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Войти'));
     await tester.pumpAndSettle();
-    expect(find.text('Введите корректный email.'), findsOneWidget);
+    expect(
+      find.text('Введите логин или email (до 254 символов).'),
+      findsOneWidget,
+    );
     await tester.ensureVisible(find.text('Зарегистрироваться'));
     await tester.tap(find.text('Зарегистрироваться'));
     await tester.pumpAndSettle();
@@ -67,7 +70,7 @@ void main() {
       expect(find.text('Вход…'), findsOneWidget);
       pending.complete(jsonResponse({}, 401));
       await tester.pumpAndSettle();
-      expect(find.text('Неверный email или пароль.'), findsOneWidget);
+      expect(find.text('Неверный логин, email или пароль.'), findsOneWidget);
       expect(find.text('roman@example.com'), findsOneWidget);
       await tester.tap(find.text('Войти'));
       await tester.pumpAndSettle();

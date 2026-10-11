@@ -1,3 +1,4 @@
+import 'package:easypark/core/constants/api_config.dart';
 import 'dart:async';
 import 'package:easypark/app.dart';
 import 'package:easypark/core/api/api_client.dart';
@@ -88,6 +89,7 @@ void main() {
     () async {
       Object? payload = [testParking];
       final api = ApiClient(
+        config: ApiConfig(baseUrl: 'https://example.test/api/'),
         tokenProvider: MemoryTokens('jwt'),
         client: MockClient((request) async {
           expect(request.url.path, '/api/parkings');
@@ -117,6 +119,7 @@ void main() {
     final pending = Completer<http.Response>();
     var requests = 0;
     final api = ApiClient(
+      config: ApiConfig(baseUrl: 'https://example.test/api/'),
       client: MockClient(
         (_) =>
             ++requests == 1 ? pending.future : Future.value(jsonResponse([])),
@@ -168,6 +171,7 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       final api = ApiClient(
+        config: ApiConfig(baseUrl: 'https://example.test/api/'),
         client: MockClient((_) async => jsonResponse([testParking])),
       );
       final router = GoRouter(

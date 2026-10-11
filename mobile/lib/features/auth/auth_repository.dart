@@ -7,12 +7,15 @@ class AuthRepository {
   final ApiClient api;
   final TokenStorage tokens;
 
-  Future<AuthSession> login(String email, String password) async =>
+  Future<AuthSession> login(String identifier, String password) async =>
       AuthSession.fromJson(
         await api.post(
           'auth/login',
           authenticated: false,
-          body: {'email': email.trim().toLowerCase(), 'password': password},
+          body: {
+            'login': identifier.trim().toLowerCase(),
+            'password': password,
+          },
         ),
       );
   Future<AuthSession> register(
