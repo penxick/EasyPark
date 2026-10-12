@@ -25,7 +25,7 @@ class BookingScreen extends StatefulWidget {
 
 class _BookingScreenState extends State<BookingScreen> {
   late Future<BookingContext> _place;
-  int _minutes = 60;
+  int _minutes = 30;
   bool _busy = false, _uncertain = false, _blocked = false;
   String? _error;
   Reservation? _result;
@@ -81,6 +81,9 @@ class _BookingScreenState extends State<BookingScreen> {
       if (mounted) setState(() => _busy = false);
     }
   }
+
+  String _price(int cents) =>
+      '${cents ~/ 100},${(cents % 100).toString().padLeft(2, '0')} ₽';
 
   void _back() {
     if (context.canPop()) {
@@ -171,35 +174,29 @@ class _BookingScreenState extends State<BookingScreen> {
                         const Text('Длительность', style: AppTypography.title),
                         const SizedBox(height: 8),
                         Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            for (final entry in {
-                              30: '30 минут',
-                              60: '1 час',
-                              120: '2 часа',
-                              180: '3 часа',
-                            }.entries)
-                              ChoiceChip(
-                                selectedColor: const Color(0xFFEFF6FF),
-                                side: BorderSide(
-                                  color: _minutes == entry.key
-                                      ? AppColors.primary
-                                      : AppColors.border,
-                                  width: _minutes == entry.key ? 2 : 1,
-                                ),
-                                label: Text(entry.value),
-                                selected: _minutes == entry.key,
-                                onSelected: _busy || _uncertain
-                                    ? null
-                                    : (_) =>
-                                          setState(() => _minutes = entry.key),
-                              ),
+                            IconButton(
+                              tooltip: 'Уменьшить длительность',
+                              icon: const Icon(Icons.remove),
+                              onPressed: _busy || _uncertain || _minutes <= 30
+                                  ? null
+                                  : () => setState(() => _minutes -= 30),
+                            ),
+                            Text('$_minutes минут'),
+                            IconButton(
+                              tooltip: 'Увеличить длительность',
+                              icon: const Icon(Icons.add),
+                              onPressed: _busy || _uncertain || _minutes >= 180
+                                  ? null
+                                  : () => setState(() => _minutes += 30),
+                            ),
                           ],
                         ),
+                        Text('Тариф: ${place.parking.formattedPrice}'),
                         const SizedBox(height: 24),
                         Text(
-                          'Стоимость: ${rubles(((place.parking.pricePerHour * 100).round() * _minutes / 60).round() / 100)}',
+                          'Стоимость: ${_price(place.parking.pricePer30MinKopecks * (_minutes ~/ 30))}',
                           style: AppTypography.title,
                         ),
                         const SizedBox(height: 8),

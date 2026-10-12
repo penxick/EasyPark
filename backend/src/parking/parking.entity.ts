@@ -13,6 +13,10 @@ const decimalNumber = {
 };
 
 @Entity('parkings')
+@Check(
+  'CHK_parkings_price30',
+  '"pricePer30Min" >= 0 AND "pricePer30Min" <= 99999999.99',
+)
 @Check('CHK_parkings_latitude', '"latitude" BETWEEN -90 AND 90')
 @Check('CHK_parkings_longitude', '"longitude" BETWEEN -180 AND 180')
 @Check(
@@ -49,6 +53,8 @@ export class Parking {
     transformer: decimalNumber,
   })
   pricePerHour!: number;
+  @Column({ type: 'numeric', precision: 10, scale: 2, default: 0 })
+  pricePer30Min!: string;
   @Column({ type: 'varchar', length: 200 })
   workingHours!: string;
   @CreateDateColumn({ type: 'timestamptz' })

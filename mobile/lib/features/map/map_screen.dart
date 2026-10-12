@@ -12,21 +12,71 @@ import 'parking.dart';
 import 'parking_map.dart';
 import 'parking_repository.dart';
 import 'parking_summary.dart';
+import 'parking_navigation.dart';
+import 'package:latlong2/latlong.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({
     super.key,
     required this.repository,
     this.tileProviderFactory,
+    this.navigation,
   });
   final ParkingRepository repository;
   final TileProvider Function()? tileProviderFactory;
+  final ParkingNavigation? navigation;
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
   final _loader = LoadController<List<Parking>>();
+  late final _navigation = widget.navigation ?? ParkingNavigation();
+  LatLng? _location;
+  DrivingRoute? _route;
+  bool _locating = false;
+  String? _navigationError;
+  int _navigationGeneration = 0;
+  int _locationVersion = 0;
+
+  Future<void> _locate([Parking? destination]) async {
+    if (_locating) return;
+    final generation = ++_navigationGeneration;
+    setState(() {
+      _locating = true;
+      _navigationError = null;
+      _route = null;
+    });
+    try {
+      final point = await _navigation.locate();
+      if (!mounted || generation != _navigationGeneration) return;
+      setState(() {
+        _location = point;
+        _locationVersion++;
+      });
+      if (destination != null) {
+        final route = await _navigation.route(
+          point,
+          LatLng(destination.latitude, destination.longitude),
+        );
+        if (!mounted || generation != _navigationGeneration) return;
+        setState(() => _route = route);
+      }
+    } catch (e) {
+      if (mounted && generation == _navigationGeneration) {
+        setState(
+          () => _navigationError = e is NavigationFailure
+              ? e.message
+              : 'Не удалось получить местоположение. Повторите попытку.',
+        );
+      }
+    } finally {
+      if (mounted && generation == _navigationGeneration) {
+        setState(() => _locating = false);
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +87,8 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void dispose() {
     _loader.dispose();
+    _navigationGeneration++;
+    if (widget.navigation == null) _navigation.dispose();
     super.dispose();
   }
 
@@ -53,6 +105,10 @@ class _MapScreenState extends State<MapScreen> {
       builder: (context) => ParkingSummary(
         parking: parking,
         onDetails: () => Navigator.pop(context, true),
+        onRoute: () {
+          Navigator.pop(context);
+          unawaited(_locate(parking));
+        },
       ),
     );
     if (details == true && mounted) context.push('/parking/${parking.id}');
@@ -64,11 +120,50 @@ class _MapScreenState extends State<MapScreen> {
     builder: (context, _) => switch (_loader.state) {
       LoadSuccess<List<Parking>>(data: final parkings)
           when parkings.isNotEmpty =>
-        ParkingMap(
-          parkings: parkings,
-          onSelect: (parking) => unawaited(_select(parking)),
-          onRefresh: _refresh,
-          tileProviderFactory: widget.tileProviderFactory,
+        Column(
+          children: [
+            if (_locating)
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text('Определение местоположения и загрузка…'),
+              ),
+            if (_navigationError != null)
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Text(_navigationError!),
+              ),
+            if (_route != null || _locating)
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (_route != null)
+                    Text(
+                      '${(_route!.distance / 1000).toStringAsFixed(1)} км · ≈ ${(_route!.duration / 60).ceil()} мин',
+                    ),
+                  TextButton(
+                    onPressed: () => setState(() {
+                      _navigationGeneration++;
+                      _route = null;
+                      _locating = false;
+                    }),
+                    child: const Text('Скрыть маршрут'),
+                  ),
+                ],
+              ),
+            Expanded(
+              child: ParkingMap(
+                parkings: parkings,
+                userControls: true,
+                onLocate: _locating ? null : () => unawaited(_locate()),
+                userPoint: _location,
+                locationVersion: _locationVersion,
+                routePoints: _route?.points ?? const [],
+                onSelect: (parking) => unawaited(_select(parking)),
+                onRefresh: _refresh,
+                tileProviderFactory: widget.tileProviderFactory,
+              ),
+            ),
+          ],
         ),
       LoadSuccess<List<Parking>>() => Center(
         child: SingleChildScrollView(

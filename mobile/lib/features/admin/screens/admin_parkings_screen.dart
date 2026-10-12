@@ -29,6 +29,7 @@ class _AdminParkingsScreenState extends State<AdminParkingsScreen> {
     'description': 'Описание',
     'address': 'Адрес',
     'pricePerHour': 'Стоимость за час',
+    'pricePer30Min': 'Стоимость за 30 минут (₽)',
     'workingHours': 'Режим работы',
     'latitude': 'Latitude',
     'longitude': 'Longitude',
@@ -43,6 +44,7 @@ class _AdminParkingsScreenState extends State<AdminParkingsScreen> {
   @override
   void initState() {
     super.initState();
+    fields['pricePer30Min']!.text = '0';
     final point = widget.mapRequest?.point;
     if (point != null) {
       fields['latitude']!.text = point.latitude.toStringAsFixed(6);
@@ -88,6 +90,7 @@ class _AdminParkingsScreenState extends State<AdminParkingsScreen> {
           'description': result.description,
           'address': p.address,
           'pricePerHour': '${p.pricePerHour}',
+          'pricePer30Min': p.pricePer30Min,
           'workingHours': result.workingHours,
           'latitude': '${p.latitude}',
           'longitude': '${p.longitude}',
@@ -143,8 +146,8 @@ class _AdminParkingsScreenState extends State<AdminParkingsScreen> {
     if (n == null || !n.isFinite || n < min || n > max) {
       return 'Введите число от $min до $max';
     }
-    if (key == 'pricePerHour' &&
-        !RegExp(r'^\d+(?:[.,]\d{1,2})?$').hasMatch(value)) {
+    if ((key == 'pricePerHour' || key == 'pricePer30Min') &&
+        !RegExp(r'^(0|[1-9]\d{0,7})(?:[.,]\d{1,2})?$').hasMatch(value)) {
       return 'Стоимость: не более двух знаков после запятой';
     }
     return null;
@@ -160,6 +163,8 @@ class _AdminParkingsScreenState extends State<AdminParkingsScreen> {
       for (final key in fields.keys)
         key: ['latitude', 'longitude', 'pricePerHour'].contains(key)
             ? number(fields[key]!.text)!
+            : key == 'pricePer30Min'
+            ? fields[key]!.text.trim().replaceAll(',', '.')
             : fields[key]!.text.trim(),
     };
     try {
@@ -432,6 +437,7 @@ class _AdminParkingsScreenState extends State<AdminParkingsScreen> {
                                     'latitude',
                                     'longitude',
                                     'pricePerHour',
+                                      'pricePer30Min',
                                   ].contains(key)
                                   ? const TextInputType.numberWithOptions(
                                       decimal: true,

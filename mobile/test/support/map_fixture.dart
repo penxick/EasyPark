@@ -9,6 +9,7 @@ const testParking = {
   'latitude': 56.010563,
   'longitude': 92.852572,
   'pricePerHour': 120.5,
+  'pricePer30Min': '60.25',
 };
 
 class MemoryTileProvider extends TileProvider {

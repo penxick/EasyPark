@@ -1,3 +1,6 @@
+const {
+  AddParkingPrice301791763200000,
+} = require('../../dist/database/migrations/1791763200000-add-parking-price30');
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { randomUUID } = require('node:crypto');
@@ -65,6 +68,7 @@ test(
               'latitude',
               'longitude',
               'pricePerHour',
+              'pricePer30Min',
               'workingHours',
               'createdAt',
               'updatedAt',
@@ -73,6 +77,7 @@ test(
             ].sort(),
           );
           assert.equal(item.pricePerHour, 123.45);
+          assert.equal(item.pricePer30Min, '0.00');
           assert.equal(item.latitude, demoParkings[0].latitude);
           assert.equal(typeof item.longitude, 'number');
           assert.ok(Number.isFinite(Date.parse(item.createdAt)));
@@ -120,6 +125,9 @@ test(
             await runner.query(`CREATE SCHEMA "${schema}"`);
             await runner.query(`SET search_path TO "${schema}"`);
             await migration.up(runner);
+            await new AddParkingPrice301791763200000().up(runner);
+            await new AddParkingPrice301791763200000().down(runner);
+            await new AddParkingPrice301791763200000().up(runner);
             isolated = new DataSource({
               ...db.options,
               schema,

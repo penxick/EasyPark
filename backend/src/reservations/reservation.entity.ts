@@ -67,11 +67,11 @@ export class Reservation {
     precision: 12,
     scale: 2,
     transformer: {
-      to: (value: number) => value,
+      to: (value: number | string) => value,
       from: (value: string) => Number(value),
     },
   })
-  totalPrice!: number;
+  totalPrice!: number | string;
   @CreateDateColumn({ type: 'timestamptz' }) createdAt!: Date;
   @UpdateDateColumn({ type: 'timestamptz' }) updatedAt!: Date;
 }

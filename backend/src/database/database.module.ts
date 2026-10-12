@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CreateUsers1789776000000 } from './migrations/1789776000000-create-users';
 import { CreateReservations1790640000000 } from './migrations/1790640000000-create-reservations';
 import { AddUserLogin1791331200000 } from './migrations/1791331200000-add-user-login';
+import { AddParkingPrice301791763200000 } from './migrations/1791763200000-add-parking-price30';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AddUserLogin1791331200000 } from './migrations/1791331200000-add-user-l
           CreateParkingSpaces1790553600000,
           CreateReservations1790640000000,
           AddUserLogin1791331200000,
+          AddParkingPrice301791763200000,
         ],
         retryAttempts: 3,
         retryDelay: 1000,

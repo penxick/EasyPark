@@ -35,6 +35,7 @@ async function reservationScenario({
       ...demoParkings[0],
       name: `Reservation test ${randomUUID()}`,
       pricePerHour: 120.51,
+      pricePer30Min: '60.26',
     });
     for (let i = 0; i < 10; i++)
       spaces.push(
@@ -104,14 +105,14 @@ async function reservationScenario({
       assert.deepEqual((await request('/reservations/me')).body, []);
     });
     await test('all durations, server price/time, isolated history and idempotent cancellation', async () => {
-      for (const minutes of [30, 60, 120, 180]) {
+      for (const minutes of [30, 60, 90, 120, 150, 180]) {
         const before = Date.now();
         const result = await create(spaces[0].id, 0, minutes);
         assert.equal(result.status, 201);
         const r = result.body;
         assert.equal(r.status, 'ACTIVE');
         assert.equal(r.userId, users[0].id);
-        assert.equal(r.totalPrice, Math.round((12051 * minutes) / 60) / 100);
+        assert.equal(r.totalPrice, (6026 * (minutes / 30)) / 100);
         assert.ok(
           Date.parse(r.startTime) >= before - 1000 &&
             Date.parse(r.startTime) <= Date.now() + 1000,
@@ -137,7 +138,7 @@ async function reservationScenario({
         );
       }
       const history = (await request('/reservations/me')).body;
-      assert.equal(history.length, 4);
+      assert.equal(history.length, 6);
       assert.ok(
         history.every(
           (r) =>

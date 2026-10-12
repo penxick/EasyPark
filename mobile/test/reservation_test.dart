@@ -168,7 +168,12 @@ void main() {
       await tester.pumpAndSettle();
       await tapText(tester, 'Забронировать');
       expect(find.text('Место A01'), findsOneWidget);
-      await tapText(tester, '30 минут');
+      expect(find.text('30 минут'), findsOneWidget);
+      await tester.tap(find.byTooltip('Увеличить длительность'));
+      await tester.pumpAndSettle();
+      expect(find.text('Стоимость: 120,50 ₽'), findsOneWidget);
+      await tester.tap(find.byTooltip('Уменьшить длительность'));
+      await tester.pumpAndSettle();
       expect(find.text('Стоимость: 60,25 ₽'), findsOneWidget);
       await tapText(tester, 'Подтвердить бронирование');
       expect(data.sent?['durationMinutes'], 30);

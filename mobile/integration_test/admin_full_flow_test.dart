@@ -5,6 +5,7 @@ import 'package:easypark/features/auth/auth_controller.dart';
 import 'package:easypark/features/map/parking_map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -56,6 +57,7 @@ void main() {
       'description': 'A13 integration',
       'address': 'Адрес A13',
       'pricePerHour': '100',
+      'pricePer30Min': '50.01',
       'workingHours': '24/7',
     }.entries) {
       await tester.ensureVisible(field('parking-${entry.key}'));
@@ -106,6 +108,41 @@ void main() {
     );
     await auth.restore();
     expect(auth.user!.id, userId);
+    final cameraContext = tester.element(find.byType(TileLayer));
+    final zoom = MapCamera.of(cameraContext).zoom;
+    await tester.tap(find.byTooltip('Приблизить'));
+    await tester.pumpAndSettle();
+    expect(MapCamera.of(cameraContext).zoom, (zoom + 1).clamp(2, 19));
+    await tester.tap(find.byTooltip('Отдалить'));
+    await tester.pumpAndSettle();
+    if (const bool.fromEnvironment('TEST_GPS')) {
+      debugPrint('NAV_PERMISSION_READY');
+      for (var i = 0; i < 120; i++) {
+        final permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.whileInUse ||
+            permission == LocationPermission.always) {
+          break;
+        }
+        await tester.pump(const Duration(milliseconds: 250));
+      }
+      await tester.tap(find.byTooltip('Моё местоположение'));
+      await tester.pumpAndSettle();
+      for (
+        var i = 0;
+        i < 80 &&
+            tester.widget<ParkingMap>(find.byType(ParkingMap)).userPoint ==
+                null;
+        i++
+      ) {
+        await tester.pump(const Duration(milliseconds: 250));
+      }
+      expect(
+        tester.widget<ParkingMap>(find.byType(ParkingMap)).userPoint,
+        isNotNull,
+      );
+      await tester.tap(find.byTooltip('Показать все парковки'));
+      await tester.pumpAndSettle();
+    }
     router.go('/admin/analytics');
     await tester.pumpAndSettle();
     expect(find.text('Нет доступа'), findsOneWidget);
@@ -119,10 +156,18 @@ void main() {
     await tester.tap(find.byKey(ValueKey('space-$spaceId')));
     await tester.pumpAndSettle();
     await tap('Забронировать');
-    await tap('30 минут');
+    expect(find.text('30 минут'), findsOneWidget);
+    expect(find.text('Стоимость: 50,01 ₽'), findsOneWidget);
+    await tester.tap(find.byTooltip('Увеличить длительность'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Увеличить длительность'));
+    await tester.pumpAndSettle();
+    expect(find.text('90 минут'), findsOneWidget);
+    expect(find.text('Стоимость: 150,03 ₽'), findsOneWidget);
     await tap('Подтвердить бронирование');
     expect(find.text('Бронирование подтверждено'), findsOneWidget);
     final mine = await auth.repository.api.get('reservations/me') as List;
+    expect(mine.single['totalPrice'], 150.03);
     final reservationId = mine.single['id'];
     await auth.logout();
     await tester.pumpAndSettle();

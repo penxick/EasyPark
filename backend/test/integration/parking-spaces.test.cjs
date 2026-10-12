@@ -1,3 +1,6 @@
+const {
+  AddParkingPrice301791763200000,
+} = require('../../dist/database/migrations/1791763200000-add-parking-price30');
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { randomUUID } = require('node:crypto');
@@ -214,6 +217,7 @@ test(
             await runner.query(`CREATE SCHEMA "${schema}"`);
             await runner.query(`SET search_path TO "${schema}"`);
             await new CreateParkings1790380800000().up(runner);
+            await new AddParkingPrice301791763200000().up(runner);
             const migration = new CreateParkingSpaces1790553600000();
             await migration.up(runner);
             isolated = new DataSource({

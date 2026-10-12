@@ -9,9 +9,11 @@ class ParkingSummary extends StatelessWidget {
     super.key,
     required this.parking,
     required this.onDetails,
+    this.onRoute,
   });
   final Parking parking;
   final VoidCallback onDetails;
+  final VoidCallback? onRoute;
   @override
   Widget build(BuildContext context) => SafeArea(
     top: false,
@@ -55,6 +57,17 @@ class ParkingSummary extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           AppButton(label: 'Подробнее', fullWidth: true, onPressed: onDetails),
+          if (onRoute != null) ...[
+            const SizedBox(height: 8),
+            AppButton(
+              label: 'Построить маршрут',
+              fullWidth: true,
+              onPressed: onRoute,
+            ),
+            const Text(
+              'Для автомобильного маршрута координаты будут переданы сервису OSRM. В EasyPark они не сохраняются.',
+            ),
+          ],
         ],
       ),
     ),

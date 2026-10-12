@@ -10,6 +10,7 @@
 **/*.pyc
 .artifacts/
 *.log
+releases/**/*.apk
 cv-service/weights/
 cv-service/models/*
 !cv-service/models/.gitkeep

@@ -5,6 +5,7 @@ import {
   Length,
   Max,
   Min,
+  Matches,
   ValidateIf,
 } from 'class-validator';
 
@@ -41,6 +42,14 @@ export class CreateParkingDto {
   @Min(0)
   @Max(99999999.99)
   pricePerHour!: number;
+
+  @ValidateIf((_: unknown, value: unknown) => value !== undefined)
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'number' ? String(value) : value,
+  )
+  @IsString()
+  @Matches(/^(0|[1-9]\d{0,7})(\.\d{1,2})?$/)
+  pricePer30Min?: string;
 
   @Transform(trim)
   @IsString()

@@ -8,8 +8,12 @@ class Parking {
     required this.latitude,
     required this.longitude,
     required this.pricePerHour,
+    this.pricePer30MinKopecks = 0,
   });
   final int id;
+  final int pricePer30MinKopecks;
+  String get pricePer30Min =>
+      '${pricePer30MinKopecks ~/ 100}.${(pricePer30MinKopecks % 100).toString().padLeft(2, '0')}';
   final String name, address;
   final double latitude, longitude, pricePerHour;
 
@@ -17,6 +21,14 @@ class Parking {
     const invalid = ApiException(ApiErrorKind.invalidResponse);
     if (value is! Map<String, dynamic>) throw invalid;
     final id = value['id'], name = value['name'], address = value['address'];
+    final tariff = (value['pricePer30Min'] ?? '0').toString();
+    if (!RegExp(r'^(0|[1-9]\d{0,7})(\.\d{1,2})?$').hasMatch(tariff)) {
+      throw invalid;
+    }
+    final parts = tariff.split('.');
+    final cents =
+        int.parse(parts.first) * 100 +
+        int.parse(parts.length == 1 ? '0' : parts.last.padRight(2, '0'));
     final lat = value['latitude'],
         lng = value['longitude'],
         price = value['pricePerHour'];
@@ -48,11 +60,12 @@ class Parking {
       latitude: lat.toDouble(),
       longitude: lng.toDouble(),
       pricePerHour: price.toDouble(),
+      pricePer30MinKopecks: cents,
     );
   }
 
   String get formattedPrice {
-    final text = pricePerHour.toStringAsFixed(2);
-    return '${text.endsWith('.00') ? text.substring(0, text.length - 3) : text.replaceAll('.', ',')} ₽ / час';
+    final text = pricePer30Min;
+    return '${text.endsWith('.00') ? text.substring(0, text.length - 3) : text.replaceAll('.', ',')} ₽ / 30 мин.';
   }
 }

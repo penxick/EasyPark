@@ -34,7 +34,7 @@ class ReservationRepository {
   }
 
   Future<Reservation> create(int spaceId, int minutes) async {
-    if (spaceId <= 0 || ![30, 60, 120, 180].contains(minutes)) {
+    if (spaceId <= 0 || minutes < 30 || minutes > 180 || minutes % 30 != 0) {
       throw const ApiException(ApiErrorKind.invalidRequest);
     }
     final result = Reservation.fromJson(

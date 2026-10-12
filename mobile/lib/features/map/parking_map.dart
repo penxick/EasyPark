@@ -17,6 +17,11 @@ class ParkingMap extends StatefulWidget {
     this.onPick,
     this.selectedPoint,
     this.initialPoint,
+    this.userControls = false,
+    this.onLocate,
+    this.userPoint,
+    this.routePoints = const [],
+    this.locationVersion = 0,
   });
   final List<Parking> parkings;
   final ValueChanged<Parking> onSelect;
@@ -24,6 +29,11 @@ class ParkingMap extends StatefulWidget {
   final TileProvider Function()? tileProviderFactory;
   final ValueChanged<LatLng>? onPick;
   final LatLng? selectedPoint, initialPoint;
+  final bool userControls;
+  final VoidCallback? onLocate;
+  final LatLng? userPoint;
+  final List<LatLng> routePoints;
+  final int locationVersion;
   @override
   State<ParkingMap> createState() => _ParkingMapState();
 }
@@ -57,6 +67,28 @@ class _ParkingMapState extends State<ParkingMap> {
   void dispose() {
     _map.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant ParkingMap oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.routePoints != oldWidget.routePoints &&
+        widget.routePoints.isNotEmpty) {
+      _map.fitCamera(
+        CameraFit.bounds(
+          bounds: LatLngBounds.fromPoints([
+            ...widget.routePoints,
+            if (widget.userPoint != null) widget.userPoint!,
+          ]),
+          padding: const EdgeInsets.all(56),
+          maxZoom: 17,
+        ),
+      );
+    } else if (widget.userPoint != null &&
+        (widget.userPoint != oldWidget.userPoint ||
+            widget.locationVersion != oldWidget.locationVersion)) {
+      _map.move(widget.userPoint!, 15);
+    }
   }
 
   void _failedTile() {
@@ -161,8 +193,29 @@ class _ParkingMapState extends State<ParkingMap> {
                   panBuffer: 0,
                   errorTileCallback: (_, _, _) => _failedTile(),
                 ),
+                if (widget.routePoints.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: widget.routePoints,
+                        strokeWidth: 5,
+                        color: AppColors.primary,
+                      ),
+                    ],
+                  ),
                 MarkerLayer(
                   markers: [
+                    if (widget.userPoint != null)
+                      Marker(
+                        point: widget.userPoint!,
+                        width: 32,
+                        height: 32,
+                        child: const Icon(
+                          Icons.my_location,
+                          color: AppColors.primary,
+                          semanticLabel: 'Ваше местоположение',
+                        ),
+                      ),
                     for (final parking in widget.parkings)
                       Marker(
                         point: LatLng(parking.latitude, parking.longitude),
@@ -230,6 +283,29 @@ class _ParkingMapState extends State<ParkingMap> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (widget.userControls) ...[
+                      IconButton(
+                        tooltip: 'Приблизить',
+                        icon: const Icon(Icons.add),
+                        onPressed: () => _map.move(
+                          _map.camera.center,
+                          (_map.camera.zoom + 1).clamp(2, 19),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Отдалить',
+                        icon: const Icon(Icons.remove),
+                        onPressed: () => _map.move(
+                          _map.camera.center,
+                          (_map.camera.zoom - 1).clamp(2, 19),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Моё местоположение',
+                        icon: const Icon(Icons.my_location),
+                        onPressed: widget.onLocate,
+                      ),
+                    ],
                     IconButton(
                       tooltip: 'Показать все парковки',
                       icon: const Icon(LucideIcons.locateFixed),

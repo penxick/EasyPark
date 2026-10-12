@@ -139,11 +139,12 @@ export class ReservationsService {
         const parking = await manager.findOneByOrFail(Parking, {
           id: space.parkingId,
         });
-        // Integer kopecks; round a half-kopeck upward for the 30-minute tariff.
-        const totalPrice =
-          Math.round(
-            (Math.round(parking.pricePerHour * 100) * dto.durationMinutes) / 60,
-          ) / 100;
+        // PostgreSQL numeric arrives as a decimal string. All arithmetic is integer.
+        const [rubles, fraction = ''] = parking.pricePer30Min.split('.');
+        const cents =
+          (BigInt(rubles) * 100n + BigInt(fraction.padEnd(2, '0'))) *
+          BigInt(dto.durationMinutes / 30);
+        const totalPrice = `${cents / 100n}.${(cents % 100n).toString().padStart(2, '0')}`;
         const reservation = await manager.save(
           Reservation,
           manager.create(Reservation, {
@@ -157,7 +158,7 @@ export class ReservationsService {
         );
         space.status = ParkingSpaceStatus.RESERVED;
         await manager.save(space);
-        return reservation;
+        return { ...reservation, totalPrice: Number(reservation.totalPrice) };
       });
     } catch (error) {
       if (
