@@ -17,6 +17,7 @@ import '../../features/profile/profile_screen.dart';
 import '../../features/reservation/reservations_screen.dart';
 import '../../features/reservation/booking_screen.dart';
 import '../../features/reservation/reservation_repository.dart';
+import '../../features/reservation/active_parking_banner.dart';
 import 'app_routes.dart';
 import '../../features/admin/data/admin_api.dart';
 import '../../features/admin/repositories/admin_repository.dart';
@@ -189,8 +190,18 @@ GoRouter createAppRouter({
           routes: [
             GoRoute(
               path: AppRoutes.home,
-              builder: (_, _) =>
-                  MapScreen(repository: ParkingRepository(auth.repository.api)),
+              builder: (_, _) => Column(
+                children: [
+                  ActiveParkingBanner(
+                    repository: ReservationRepository(auth.repository.api),
+                  ),
+                  Expanded(
+                    child: MapScreen(
+                      repository: ParkingRepository(auth.repository.api),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

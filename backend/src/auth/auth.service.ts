@@ -39,7 +39,10 @@ export class AuthService {
 
   private async session(user: User) {
     return {
-      accessToken: await this.jwt.signAsync({ sub: String(user.id) }),
+      accessToken: await this.jwt.signAsync({
+        sub: String(user.id),
+        ver: user.tokenVersion ?? 0,
+      }),
       user: publicUser(user),
     };
   }

@@ -4,11 +4,42 @@ import '../../core/api/api_exception.dart';
 import '../../core/storage/token_storage.dart';
 import 'auth_repository.dart';
 import 'auth_user.dart';
+import '../../core/storage/server_address_storage.dart';
+import '../../core/constants/api_config.dart';
 
 enum AuthStatus { checking, signedOut, signedIn, restoreError }
 
 class AuthController extends ChangeNotifier {
-  AuthController(this.repository);
+  AuthController(this.repository, {this.serverStorage});
+  final ServerAddressStorage? serverStorage;
+  bool _serverLoaded = false;
+
+  void _replaceApi(ApiConfig config) {
+    repository.api.close();
+    repository.api = ApiClient(
+      config: config,
+      tokenProvider: repository.tokens,
+      onUnauthorized: invalidate,
+    );
+  }
+
+  Future<void> changeServer(String value) async {
+    if (busy) throw StateError('Дождитесь завершения текущего действия.');
+    final config = ApiConfig.forServer(value);
+    await invalidate();
+    if (status != AuthStatus.signedOut) throw const TokenStorageException();
+    if (serverStorage == null) throw StateError('Хранилище адреса недоступно.');
+    busy = true;
+    _notify();
+    try {
+      await serverStorage!.write(config.baseUri.toString());
+      _replaceApi(config);
+      _serverLoaded = true;
+    } finally {
+      busy = false;
+      _notify();
+    }
+  }
 
   factory AuthController.platform() {
     final tokens = SecureTokenStorage();
@@ -21,6 +52,7 @@ class AuthController extends ChangeNotifier {
           onUnauthorized: () => controller.invalidate(),
         ),
       ),
+      serverStorage: const ServerAddressStorage(),
     );
     return controller;
   }
@@ -54,6 +86,12 @@ class AuthController extends ChangeNotifier {
     status = AuthStatus.checking;
     _notify();
     try {
+      if (!_serverLoaded && serverStorage != null) {
+        final address = await serverStorage!.read();
+        if (!_current(generation)) return;
+        if (address != null) _replaceApi(ApiConfig.forServer(address));
+        _serverLoaded = true;
+      }
       final token = await repository.tokens.readToken();
       if (!_current(generation)) return;
       if (token == null || token.isEmpty) {
@@ -175,6 +213,11 @@ class AuthController extends ChangeNotifier {
       'Пользователь с таким email уже существует.',
     ApiException(statusCode: 429) =>
       'Слишком много попыток. Подождите минуту и попробуйте снова.',
+    ApiException(statusCode: 404) =>
+      'Сервер не поддерживает запрошенный адрес API.',
+    ApiException(statusCode: final status)
+        when status != null && status >= 500 =>
+      'Ошибка сервера. Попробуйте позже.',
     ApiException() => error.message,
     _ => 'Не удалось выполнить действие. Попробуйте ещё раз.',
   };

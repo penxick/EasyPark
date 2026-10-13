@@ -23,6 +23,7 @@ export enum UserRole {
 @Check('CHK_users_email_normalized', '"email" = lower(btrim("email"))')
 @Check('CHK_users_role', "\"role\" IN ('USER', 'ADMIN')")
 export class User {
+  @Column({ type: 'integer', default: 0 }) tokenVersion!: number;
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'PK_users_id' })
   id!: number;
 

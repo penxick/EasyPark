@@ -13,6 +13,11 @@ class SplashScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Image.asset(
+            'assets/easypark-logo.png',
+            height: 140,
+            fit: BoxFit.contain,
+          ),
           Text(
             'EasyPark',
             style: AppTypography.heading1.copyWith(color: AppColors.heading),

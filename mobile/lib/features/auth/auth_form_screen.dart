@@ -7,6 +7,8 @@ import '../../core/widgets/ui_kit.dart';
 import 'auth_controller.dart';
 import 'auth_layout.dart';
 import 'auth_validators.dart';
+import 'server_settings_screen.dart';
+import 'password_reset_screen.dart';
 
 class AuthFormScreen extends StatefulWidget {
   const AuthFormScreen({
@@ -66,6 +68,39 @@ class _AuthFormScreenState extends State<AuthFormScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        tooltip: 'Подключение к серверу',
+                        onPressed: busy
+                            ? null
+                            : () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      ServerSettingsScreen(auth: widget.auth),
+                                ),
+                              ),
+                        icon: const Icon(Icons.settings),
+                      ),
+                    ),
+                    Image.asset(
+                      'assets/easypark-logo.png',
+                      height: 120,
+                      fit: BoxFit.contain,
+                      semanticLabel: 'ИЗИ ПАРК',
+                    ),
+                    if (!registration)
+                      TextButton(
+                        onPressed: busy
+                            ? null
+                            : () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      PasswordResetScreen(auth: widget.auth),
+                                ),
+                              ),
+                        child: const Text('Забыли пароль?'),
+                      ),
                     Semantics(
                       header: true,
                       child: Text(

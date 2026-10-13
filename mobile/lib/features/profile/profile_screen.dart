@@ -1,3 +1,4 @@
+import '../auth/server_settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'dart:async';
@@ -77,6 +78,15 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
             ),
             const SizedBox(height: 16),
+            AppButton(
+              label: 'Настройки → Подключение к серверу',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ServerSettingsScreen(auth: widget.auth),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
             AppButton(
               label: 'Обновить профиль',
               icon: LucideIcons.refreshCw,

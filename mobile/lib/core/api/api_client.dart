@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show TlsException;
+import 'package:flutter/foundation.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -41,9 +43,17 @@ class ApiClient {
     Object? body,
     Map<String, String>? query,
     bool authenticated = true,
+    int? expectedStatusCode,
   }) async {
     final uri = _resolve(path, query);
     final abort = Completer<void>();
+    final watch = Stopwatch()..start();
+    int? status;
+    String? failure;
+    final diagnose =
+        kDebugMode &&
+        const bool.fromEnvironment('API_DIAGNOSTICS', defaultValue: true) &&
+        (path == 'auth/login' || path == 'auth/register');
     try {
       final token = authenticated
           ? await tokenProvider?.readToken().timeout(config.timeout)
@@ -71,6 +81,7 @@ class ApiClient {
             },
           );
 
+      status = response.statusCode;
       if (response.statusCode == 401 && token != null && token.isNotEmpty) {
         try {
           // A late 401 from an old session must not clear a newly saved token.
@@ -89,22 +100,49 @@ class ApiClient {
           code: _publicErrorCode(response),
         );
       }
+      if (expectedStatusCode != null &&
+          response.statusCode != expectedStatusCode) {
+        throw const ApiException(ApiErrorKind.invalidResponse);
+      }
       if (response.statusCode == 204 || response.bodyBytes.isEmpty) return null;
       try {
         return jsonDecode(utf8.decode(response.bodyBytes));
       } on FormatException {
         throw const ApiException(ApiErrorKind.invalidResponse);
       }
-    } on ApiException {
+    } on ApiException catch (error) {
+      failure = error.kind.name;
       rethrow;
     } on TimeoutException {
+      failure = 'timeout';
       throw const ApiException(ApiErrorKind.timeout);
-    } on http.ClientException {
+    } on http.ClientException catch (error) {
+      final message = error.message.toLowerCase();
+      failure = message.contains('handshake') || message.contains('certificate')
+          ? 'tls'
+          : message.contains('host lookup') ||
+                message.contains('name resolution')
+          ? 'dns'
+          : 'network';
       throw const ApiException(ApiErrorKind.network);
     } on JsonUnsupportedObjectError {
+      failure = 'invalidRequest';
       throw const ApiException(ApiErrorKind.invalidRequest);
+    } on TlsException {
+      failure = 'tls';
+      throw const ApiException(ApiErrorKind.network);
     } catch (_) {
+      failure = 'unexpected';
       throw const ApiException(ApiErrorKind.unexpected);
+    } finally {
+      if (diagnose) {
+        // Never log query values, bodies, headers, credentials or exception text.
+        debugPrint(
+          'EasyPark auth HTTP $method ${uri.origin}${uri.path} '
+          'status=${status ?? '-'} error=${failure ?? '-'} '
+          'elapsedMs=${watch.elapsedMilliseconds}',
+        );
+      }
     }
   }
 

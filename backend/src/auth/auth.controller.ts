@@ -8,12 +8,33 @@ import {
 } from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
-import { LoginDto, RegisterDto } from './auth.dto';
+import {
+  LoginDto,
+  RegisterDto,
+  PasswordResetRequestDto,
+  PasswordResetConfirmDto,
+} from './auth.dto';
+import { PasswordResetService } from './password-reset.service';
 
 @Controller('auth')
 @UseGuards(ThrottlerGuard)
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private readonly resets: PasswordResetService,
+  ) {}
+  @Post('password-reset/request')
+  @HttpCode(200)
+  @Header('Cache-Control', 'no-store')
+  requestReset(@Body() dto: PasswordResetRequestDto) {
+    return this.resets.request(dto.email);
+  }
+  @Post('password-reset/confirm')
+  @HttpCode(200)
+  @Header('Cache-Control', 'no-store')
+  confirmReset(@Body() dto: PasswordResetConfirmDto) {
+    return this.resets.confirm(dto.email, dto.code, dto.password);
+  }
 
   @Post('register')
   @Header('Cache-Control', 'no-store')

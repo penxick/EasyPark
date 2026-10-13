@@ -63,10 +63,10 @@ void main() {
     expect(tester.takeException(), isNull);
   });
   test('parking validates external data and formats prices', () {
-    expect(Parking.fromJson(testParking).formattedPrice, '60,25 ₽ / 30 мин.');
+    expect(Parking.fromJson(testParking).formattedPrice, '120,50 ₽/час');
     expect(
-      Parking.fromJson({...testParking, 'pricePer30Min': '100'}).formattedPrice,
-      '100 ₽ / 30 мин.',
+      Parking.fromJson({...testParking, 'pricePerHour': 100}).formattedPrice,
+      '100,00 ₽/час',
     );
     for (final patch in [
       {'id': 0},
@@ -204,7 +204,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('parking-marker-7')));
       await tester.pumpAndSettle();
       expect(find.byType(ParkingSummary), findsOneWidget);
-      expect(find.text('60,25 ₽ / 30 мин.'), findsOneWidget);
+      expect(find.text('120,50 ₽/час'), findsOneWidget);
       await tester.ensureVisible(find.text('Подробнее'));
       expect(tester.takeException(), isNull);
       await tester.tap(find.text('Подробнее'));

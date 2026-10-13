@@ -49,6 +49,25 @@ class ReservationRepository {
     return result;
   }
 
+  Future<Reservation> createSession(
+    int spaceId,
+    String mode,
+    String paymentMethod,
+    int minutes,
+  ) async => Reservation.fromJson(
+    await api.post(
+      'reservations/sessions',
+      body: {
+        'parkingSpaceId': spaceId,
+        'mode': mode,
+        'paymentMethod': paymentMethod,
+        if (mode == 'PLANNED') 'plannedMinutes': minutes,
+      },
+    ),
+  );
+  Future<Reservation> finish(int id) async =>
+      Reservation.fromJson(await api.patch('reservations/$id/finish'));
+
   Future<List<Reservation>> mine() async {
     final value = await api.get('reservations/me');
     if (value is! List) throw const ApiException(ApiErrorKind.invalidResponse);

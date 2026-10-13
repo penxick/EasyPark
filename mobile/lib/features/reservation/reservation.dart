@@ -18,11 +18,31 @@ class Reservation {
     required this.endTime,
     required this.status,
     required this.totalPrice,
+    this.mode,
+    this.sessionState,
+    this.paymentMethod,
+    this.plannedMinutes,
+    this.hourlyRateSnapshot,
+    this.preliminaryPrice,
+    this.finalPrice,
+    this.actualStartTime,
+    this.actualEndTime,
+    this.elapsedSeconds = 0,
   });
   final int id, userId, parkingSpaceId;
   final DateTime startTime, endTime;
   final String status;
   final double totalPrice;
+  final String? mode,
+      sessionState,
+      paymentMethod,
+      hourlyRateSnapshot,
+      preliminaryPrice,
+      finalPrice;
+  final int? plannedMinutes;
+  final int elapsedSeconds;
+  final DateTime? actualStartTime, actualEndTime;
+
   bool get active => status == 'ACTIVE' || status == 'PENDING';
   ReservationCategory get category => active
       ? ReservationCategory.active
@@ -79,6 +99,20 @@ class Reservation {
       endTime: end,
       status: status as String,
       totalPrice: price.toDouble(),
+      mode: value['mode'] as String?,
+      sessionState: value['sessionState'] as String?,
+      paymentMethod: value['paymentMethod'] as String?,
+      plannedMinutes: value['plannedMinutes'] as int?,
+      hourlyRateSnapshot: value['hourlyRateSnapshot']?.toString(),
+      preliminaryPrice: value['preliminaryPrice']?.toString(),
+      finalPrice: value['finalPrice']?.toString(),
+      actualStartTime: DateTime.tryParse(
+        value['actualStartTime']?.toString() ?? '',
+      ),
+      actualEndTime: DateTime.tryParse(
+        value['actualEndTime']?.toString() ?? '',
+      ),
+      elapsedSeconds: (value['elapsedSeconds'] as num?)?.toInt() ?? 0,
     );
   }
 }

@@ -1,7 +1,7 @@
 name: easypark
 description: EasyPark mobile application. Flutter foundation.
 publish_to: none
-version: 1.1.0+2
+version: 1.2.2+5
 
 environment:
   sdk: ^3.10.1
@@ -27,4 +27,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/easypark-logo.png
 

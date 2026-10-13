@@ -56,7 +56,7 @@ export class AdminAnalyticsService {
         (SELECT COUNT(*)::int FROM users) AS "totalUsers",
         (SELECT COUNT(*)::int FROM reservations) AS "totalReservations",
         (SELECT COUNT(*)::int FROM reservations WHERE status IN ('ACTIVE', 'PENDING')
-          AND "endTime" > CURRENT_TIMESTAMP) AS "activeReservations"
+          AND (mode IS NOT NULL OR "endTime" > CURRENT_TIMESTAMP)) AS "activeReservations"
       FROM (SELECT ${spaceCounts} FROM parking_spaces) spaces`);
     return withOccupancy(rows[0]);
   }
@@ -73,7 +73,7 @@ export class AdminAnalyticsService {
         ), reservation_counts AS (
           SELECT space."parkingId", COUNT(*)::int AS "totalReservations",
             COUNT(*) FILTER (WHERE reservation.status IN ('ACTIVE', 'PENDING')
-              AND reservation."endTime" > CURRENT_TIMESTAMP)::int AS "activeReservations"
+              AND (reservation.mode IS NOT NULL OR reservation."endTime" > CURRENT_TIMESTAMP))::int AS "activeReservations"
           FROM reservations reservation JOIN parking_spaces space ON space.id = reservation."parkingSpaceId"
           GROUP BY space."parkingId"
         )

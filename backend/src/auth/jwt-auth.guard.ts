@@ -29,7 +29,7 @@ export class JwtAuthGuard implements CanActivate {
       authorization,
     );
     if (!match) throw new UnauthorizedException();
-    let payload: { sub?: unknown; exp?: unknown; iat?: unknown };
+    let payload: { sub?: unknown; exp?: unknown; iat?: unknown; ver?: unknown };
     try {
       payload = await this.jwt.verifyAsync(match[1]);
     } catch {
@@ -47,6 +47,8 @@ export class JwtAuthGuard implements CanActivate {
     // Read current identity/role from DB; do not trust a role claim in a token.
     const user = await this.users.findById(Number(payload.sub));
     if (!user) throw new UnauthorizedException();
+    if ((payload.ver ?? 0) !== (user.tokenVersion ?? 0))
+      throw new UnauthorizedException();
     request.user = publicUser(user);
     return true;
   }

@@ -1,3 +1,4 @@
+import '../../auth/server_settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/widgets/ui_kit.dart';
@@ -27,6 +28,15 @@ class AdminProfileScreen extends StatelessWidget {
                   child: ProfileDetails(user: user),
                 ),
                 const SizedBox(height: AppSpacing.lg),
+                AppButton(
+                  label: 'Настройки → Подключение к серверу',
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ServerSettingsScreen(auth: auth),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 AppButton(
                   label: 'Обновить профиль',
                   icon: LucideIcons.refreshCw,

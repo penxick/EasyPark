@@ -33,10 +33,10 @@ void main() {
       addTearDown(auth.dispose);
       await tester.pumpWidget(EasyParkApp(router: router));
       await tester.pumpAndSettle();
-      expect(find.text('Место A01'), findsOneWidget);
+      expect(find.textContaining('Место A01'), findsOneWidget);
       router.go('/parking/7/book/2');
       await tester.pumpAndSettle();
-      expect(find.text('Место A01'), findsNothing);
+      expect(find.textContaining('Место A01'), findsNothing);
       expect(find.text('Запрошенные данные не найдены.'), findsOneWidget);
       expect(data.posts, 0);
     },
@@ -56,7 +56,7 @@ void main() {
       addTearDown(auth.dispose);
       await tester.pumpWidget(EasyParkApp(router: router));
       await tester.pumpAndSettle();
-      await tapText(tester, 'Подтвердить бронирование');
+      await tapText(tester, 'Оплатить и забронировать');
       expect(data.posts, 0);
       data.occupied = false;
       router.go('/reservations');
@@ -64,7 +64,7 @@ void main() {
       router.go('/parking/7/book/1');
       await tester.pumpAndSettle();
       data.postStatus = 401;
-      await tapText(tester, 'Подтвердить бронирование');
+      await tapText(tester, 'Оплатить и забронировать');
       expect(find.text('Вход в систему'), findsOneWidget);
       expect(tokens.value, isNull);
     },
@@ -86,7 +86,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tapText(tester, 'Подтвердить бронирование');
+      await tapText(tester, 'Оплатить и забронировать');
       await tapText(tester, 'Отменить бронирование');
       await tapText(tester, 'Да, отменить');
       expect(find.text('Бронирование отменено'), findsNothing);
@@ -167,16 +167,24 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('space-1')));
       await tester.pumpAndSettle();
       await tapText(tester, 'Забронировать');
-      expect(find.text('Место A01'), findsOneWidget);
-      expect(find.text('30 минут'), findsOneWidget);
-      await tester.tap(find.byTooltip('Увеличить длительность'));
+      expect(find.textContaining('Место A01'), findsOneWidget);
+      await tester.enterText(find.byKey(const ValueKey('booking-hours')), '1');
+      await tester.enterText(
+        find.byKey(const ValueKey('booking-minutes')),
+        '30',
+      );
       await tester.pumpAndSettle();
-      expect(find.text('Стоимость: 120,50 ₽'), findsOneWidget);
-      await tester.tap(find.byTooltip('Уменьшить длительность'));
+      expect(find.text('180,75 ₽'), findsOneWidget);
+      await tester.enterText(find.byKey(const ValueKey('booking-hours')), '0');
+      await tester.enterText(
+        find.byKey(const ValueKey('booking-minutes')),
+        '30',
+      );
       await tester.pumpAndSettle();
-      expect(find.text('Стоимость: 60,25 ₽'), findsOneWidget);
-      await tapText(tester, 'Подтвердить бронирование');
-      expect(data.sent?['durationMinutes'], 30);
+      expect(find.text('60,25 ₽'), findsOneWidget);
+      await tapText(tester, 'Оплатить и забронировать');
+      expect(data.sent?['plannedMinutes'], 30);
+      expect(data.sent?['paymentMethod'], 'CARD');
       expect(find.text('Бронирование подтверждено'), findsOneWidget);
       expect(
         find.text('Стоимость: 120,50 ₽'),
@@ -210,10 +218,11 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Подтвердить бронирование'));
+    await tester.ensureVisible(find.text('Оплатить и забронировать'));
+    await tester.tap(find.text('Оплатить и забронировать'));
     await tester.pump();
     await tester.tap(
-      find.text('Подтвердить бронирование'),
+      find.text('Оплатить и забронировать'),
       warnIfMissed: false,
     );
     await tester.pump();
@@ -245,13 +254,13 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tapText(tester, 'Подтвердить бронирование');
+        await tapText(tester, 'Оплатить и забронировать');
         if (conflict) {
           expect(
             find.textContaining('Место больше недоступно.'),
             findsOneWidget,
           );
-          await tapText(tester, 'Подтвердить бронирование');
+          await tapText(tester, 'Оплатить и забронировать');
         } else {
           await tapText(tester, 'Проверить бронирования');
           expect(find.text('Бронирование подтверждено'), findsOneWidget);
@@ -281,7 +290,7 @@ void main() {
       addTearDown(auth.dispose);
       await tester.pumpWidget(EasyParkApp(router: router));
       await tester.pumpAndSettle();
-      expect(find.text('Место A01'), findsOneWidget);
+      expect(find.textContaining('Место A01'), findsOneWidget);
       await tapText(tester, 'Отменить бронирование');
       await tapText(tester, 'Да, отменить');
       await tapText(tester, 'Обновить бронирования');

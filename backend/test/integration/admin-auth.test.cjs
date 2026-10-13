@@ -76,6 +76,7 @@ test(
         await migration.up(runner);
         await migration.down(runner);
         await migration.up(runner);
+        await runner.query('ALTER TABLE users ADD COLUMN "tokenVersion" integer NOT NULL DEFAULT 0');
       } finally {
         await runner.release();
       }

@@ -26,7 +26,9 @@ class ReservationFixture {
   Map<String, dynamic>? sent;
   Future<http.Response> handle(http.Request request) async {
     final path = request.url.path;
-    if (path.endsWith('/reservations') && request.method == 'POST') {
+    if ((path.endsWith('/reservations') ||
+            path.endsWith('/reservations/sessions')) &&
+        request.method == 'POST') {
       posts++;
       sent = jsonDecode(request.body) as Map<String, dynamic>;
       if (pending != null) return pending!;

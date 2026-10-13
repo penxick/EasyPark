@@ -64,8 +64,8 @@ class Parking {
     );
   }
 
-  String get formattedPrice {
-    final text = pricePer30Min;
-    return '${text.endsWith('.00') ? text.substring(0, text.length - 3) : text.replaceAll('.', ',')} ₽ / 30 мин.';
-  }
+  int get hourlyKopecks =>
+      int.parse(pricePerHour.toStringAsFixed(2).replaceAll('.', ''));
+  String get formattedPrice =>
+      '${pricePerHour.toStringAsFixed(2).replaceAll('.', ',')} ₽/час';
 }

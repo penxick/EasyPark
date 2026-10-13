@@ -7,6 +7,8 @@ import { CreateUsers1789776000000 } from './migrations/1789776000000-create-user
 import { CreateReservations1790640000000 } from './migrations/1790640000000-create-reservations';
 import { AddUserLogin1791331200000 } from './migrations/1791331200000-add-user-login';
 import { AddParkingPrice301791763200000 } from './migrations/1791763200000-add-parking-price30';
+import { ParkingSessions1791849600000 } from './migrations/1791849600000-parking-sessions';
+import { PasswordResets1791849601000 } from './migrations/1791849601000-password-resets';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { AddParkingPrice301791763200000 } from './migrations/1791763200000-add-p
           CreateReservations1790640000000,
           AddUserLogin1791331200000,
           AddParkingPrice301791763200000,
+          ParkingSessions1791849600000,
+          PasswordResets1791849601000,
         ],
         retryAttempts: 3,
         retryDelay: 1000,

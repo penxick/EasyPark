@@ -64,6 +64,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.enterText(field('email'), 'roman@example.com');
       await tester.enterText(field('password'), 'password');
+      await tester.ensureVisible(find.text('Войти'));
       await tester.tap(find.text('Войти'));
       await tester.pump();
       expect(tester.widget<TextFormField>(field('email')).enabled, false);
@@ -72,6 +73,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Неверный логин, email или пароль.'), findsOneWidget);
       expect(find.text('roman@example.com'), findsOneWidget);
+      await tester.ensureVisible(find.text('Войти'));
       await tester.tap(find.text('Войти'));
       await tester.pumpAndSettle();
       expect(find.text('Карта'), findsOneWidget);

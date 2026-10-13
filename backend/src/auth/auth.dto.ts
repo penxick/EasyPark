@@ -49,3 +49,16 @@ export class RegisterDto {
   @Matches(/\S/u, { message: 'Пароль не может состоять только из пробелов.' })
   password!: string;
 }
+
+export class PasswordResetRequestDto {
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim().toLowerCase() : value,
+  )
+  @IsEmail()
+  @MaxLength(254)
+  email!: string;
+}
+export class PasswordResetConfirmDto extends PasswordResetRequestDto {
+  @IsString() @Matches(/^\d{6}$/) code!: string;
+  @IsString() @Length(8, 128) @Matches(/\S/u) password!: string;
+}

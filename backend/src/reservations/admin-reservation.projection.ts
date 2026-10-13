@@ -3,8 +3,8 @@ import { Reservation, ReservationStatus } from './reservation.entity';
 
 // Read-only effective status avoids stale ACTIVE rows between worker passes.
 export const adminReservationStatus = `CASE
-  WHEN reservation.status = 'ACTIVE' AND reservation.endTime <= :now THEN 'COMPLETED'
-  WHEN reservation.status = 'PENDING' AND reservation.endTime <= :now THEN 'EXPIRED'
+  WHEN reservation.mode IS NULL AND reservation.status = 'ACTIVE' AND reservation.endTime <= :now THEN 'COMPLETED'
+  WHEN reservation.mode IS NULL AND reservation.status = 'PENDING' AND reservation.endTime <= :now THEN 'EXPIRED'
   ELSE reservation.status END`;
 
 export function adminReservationQuery(manager: EntityManager, now: Date) {

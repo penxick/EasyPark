@@ -5,13 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  EntityManager,
-  In,
-  MoreThan,
-  QueryFailedError,
-  Repository,
-} from 'typeorm';
+import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import { Parking } from '../parking/parking.entity';
 import { ParkingSpace, ParkingSpaceStatus } from './parking-space.entity';
 import {
@@ -46,7 +40,9 @@ export class ParkingSpacesService {
             .andWhere('reservation.status IN (:...live)', {
               live: [ReservationStatus.ACTIVE, ReservationStatus.PENDING],
             })
-            .andWhere('reservation.endTime > CURRENT_TIMESTAMP'),
+            .andWhere(
+              '(reservation.mode IS NOT NULL OR reservation.endTime > CURRENT_TIMESTAMP)',
+            ),
         'hasActiveReservation',
       )
       .where('space.parkingId = :parkingId', { parkingId })
@@ -60,11 +56,15 @@ export class ParkingSpacesService {
   }
 
   private hasActiveReservation(manager: EntityManager, id: number, now: Date) {
-    return manager.existsBy(Reservation, {
-      parkingSpaceId: id,
-      status: In([ReservationStatus.ACTIVE, ReservationStatus.PENDING]),
-      endTime: MoreThan(now),
-    });
+    return manager
+      .getRepository(Reservation)
+      .createQueryBuilder('r')
+      .where('r.parkingSpaceId = :id', { id })
+      .andWhere('r.status IN (:...live)', {
+        live: [ReservationStatus.ACTIVE, ReservationStatus.PENDING],
+      })
+      .andWhere('(r.mode IS NOT NULL OR r.endTime > :now)', { now })
+      .getExists();
   }
 
   private async lock(manager: EntityManager, id: number) {

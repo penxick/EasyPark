@@ -4,7 +4,7 @@ import 'auth_user.dart';
 
 class AuthRepository {
   AuthRepository({required this.api, required this.tokens});
-  final ApiClient api;
+  ApiClient api;
   final TokenStorage tokens;
 
   Future<AuthSession> login(String identifier, String password) async =>

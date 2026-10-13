@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { PasswordService } from './password.service';
 import { RoleGuard } from './role.guard';
 import { AdminBootstrapService } from './admin-bootstrap.service';
+import { PasswordResetService } from './password-reset.service';
 
 export const JWT_ISSUER = 'easypark-backend';
 export const JWT_AUDIENCE = 'easypark-mobile';
@@ -38,6 +39,7 @@ export const JWT_AUDIENCE = 'easypark-mobile';
   ],
   controllers: [AuthController, UsersController],
   providers: [
+    PasswordResetService,
     AuthService,
     PasswordService,
     JwtAuthGuard,
