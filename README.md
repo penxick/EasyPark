@@ -1,238 +1,232 @@
-# EasyPark — локальный MVP, этап 21
+# EasyPark
 
-Начато расширение административной панели по новому ТЗ: выполнены A1–A13.
-[A2 — системный ADMIN и backend-авторизация](docs/admin/stage-a2.md),
-[A3 — Parking Admin Backend](docs/admin/stage-a3.md),
-[A4 — ParkingSpace Admin Backend](docs/admin/stage-a4.md),
-[A5 — Users и Reservations Backend](docs/admin/stage-a5.md),
-[A6 — Analytics Backend](docs/admin/stage-a6.md),
-[A7 — Admin Flutter Base](docs/admin/stage-a7.md),
-[A8 — управление парковками Flutter](docs/admin/stage-a8.md),
-[A9 — создание и перенос через карту](docs/admin/stage-a9.md),
-[A10 — управление местами](docs/admin/stage-a10.md),
-[A11 — пользователи и бронирования](docs/admin/stage-a11.md),
-[A12 — аналитика Flutter](docs/admin/stage-a12.md),
-[A13 — регрессионное тестирование](docs/admin/stage-a13.md).
-[Существующие возможности, необходимые изменения и план A2–A13](docs/admin/stage-a1.md).
-Административный аккаунт создаётся при запуске backend. В общем экране входа
-введите ADMIN_LOGIN и пароль из .env: откроется административный Dashboard
-с реальными показателями и меню. В разделе «Парковки» доступны список, просмотр,
-создание, редактирование и удаление с подтверждением. «Открыть карту» → «Добавить
-парковку» → нажмите точку → «Продолжить» открывает форму с координатами.
-При редактировании «Выбрать положение на карте» позволяет перенести парковку.
-После сохранения на карте появляется актуальный маркер.
-«Управлять местами» открывает список, создание и редактирование мест, управление
-доступностью и удаление с подтверждением. Физическая занятость и активная бронь
-показаны отдельно. Добавлены списки пользователей и бронирований, карточки,
-история пользователя, фильтры и серверная пагинация. Регрессионная проверка A13 выполнена; ограничения перечислены в отчёте.
-Аналитика показывает общие показатели, распределение статусов, загрузку и бронирования по парковкам.
+Мобильное приложение поиска и бронирования парковок с административной панелью. Flutter-клиент, NestJS API и PostgreSQL используют общие данные пользователей, парковок, мест и бронирований. Отдельный FastAPI-сервис выполняет распознавание транспорта на изображениях.
 
-## Получить проект на другом компьютере
-
-```powershell
-git clone https://github.com/penxick/EasyParkA.git D:\EasyPark
-cd D:\EasyPark
-Copy-Item .env.example .env
-```
-
-Отредактируйте `.env`: замените `POSTGRES_PASSWORD`, `JWT_SECRET` и
-`ADMIN_PASSWORD` своими значениями; `ADMIN_LOGIN=admin`. Для JWT_SECRET нужен
-случайный секрет длиной не менее 32 байт, для ADMIN_PASSWORD — 12–128 символов
-без значения-заглушки. Пароль с `#` заключайте в одинарные кавычки.
-Установите Docker Desktop и запустите команды раздела «Запуск серверов» ниже.
-Демопарковки создаются командой seed. Локальная база пользователей и броней
-не хранится в Git: на новом компьютере она будет пустой, зарегистрируйтесь снова.
-
-Для Android установите Flutter и Android SDK, затем выполните команды раздела
-«Android». Сборочные каталоги, `node_modules`, Python-окружение и APK не входят
-в репозиторий: Docker и Flutter восстановят их при сборке. Исходные материалы ТЗ
-и Figma входят в репозиторий без изменений.
-
-Flutter-приложение поиска и бронирования парковок, NestJS backend с PostgreSQL
-и отдельный FastAPI CV-сервис. Этапы 0–21 выполнены; результаты финальной сборки
-описаны в [отчёте этапа 21](docs/stage-21.md), матрица тестирования —
-в [отчёте этапа 20](docs/stage-20.md).
+**Текущая версия Android: 1.2.2+5** · `com.easypark.easypark` · debug-сборка.
 
 ## Возможности
 
-Регистрация, вход и восстановление JWT-сессии; карта OpenStreetMap; информация
-о парковке и схема мест; бронирование на 30/60/120/180 минут; отмена и история;
-профиль и выход. Backend защищает от двойной брони транзакциями и уникальным
-индексом, автоматически завершает истёкшие брони. CV распознаёт транспорт готовой
-YOLO11n на CPU, принимает тестовые изображения и поддерживает локальные веса
-через MODEL_PATH. Обучение не выполняется, CV не подключён к Flutter.
+- **USER:** регистрация, вход, сохранение сессии, карта OpenStreetMap, GPS и маршрут OSRM, парковки и схема мест, бронирования, история и профиль.
+- **Бронирование:** режимы «Запланировать» с ручным вводом часов/минут и «По счётчику», почасовой тариф, предварительная и фактическая стоимость, восстановление таймера с backend.
+- **Оплата:** выбор банковской карты или СБП с сохранением способа оплаты. Это демонстрация — деньги не списываются.
+- **ADMIN:** Dashboard, создание и редактирование парковок через карту, управление местами и доступностью, пользователи, бронирования, аналитика по реальным данным PostgreSQL. API защищён JWT и ролью.
+- **Настройки сервера:** смена адреса API до входа и из профиля без пересборки APK; поддержка Cloudflare Tunnel.
+- **Восстановление пароля:** email-код через настраиваемый SMTP, срок действия и ограничение попыток, одноразовое применение, отзыв прежних JWT после сброса.
+- **CV:** отдельный сервис YOLO11n для JPEG/PNG. Автоматическое определение занятости парковочных мест и запуск таймера через YOLO пока не подключены.
 
-## Структура
+## Структура проекта
 
-- `mobile/` — Flutter/Dart, Android/iOS исходники.
-- `backend/` — NestJS/TypeScript, TypeORM, миграции и seed.
-- `cv-service/` — Python/FastAPI, YOLO и CLI проверки изображений.
-- `docs/stage-0.md` … `docs/stage-21.md` — отчёты разработки.
-- `docs/tz/` и `docs/figma-reference/` — защищённые исходные материалы.
-- `source-materials.sha256.json` — контрольные суммы 75 исходных файлов.
+| Путь | Назначение |
+| --- | --- |
+| `mobile/` | Flutter/Dart, Android и iOS исходники |
+| `backend/` | NestJS/TypeScript, TypeORM, миграции, seed и тесты |
+| `cv-service/` | FastAPI, YOLO и инструменты обработки изображений |
+| `docs/` | ТЗ, дизайн-референсы и отчёты разработки |
+| `releases/` | Документация сборок; APK исключены из Git |
+| `.env.example` | Образец конфигурации без действующих секретов |
+| `docker-compose.yml` | PostgreSQL, backend и CV-service |
 
-React/Vite экспорт использован как дизайн-источник; приложение реализовано
-Flutter widgets без переноса web-зависимостей. Корень проекта — D:\EasyPark.
+`docs/tz/` и `docs/figma-reference/` — исходные материалы, их не следует изменять при разработке. Figma Make использован как визуальный референс; конечное приложение реализовано Flutter widgets без React/Vite-зависимостей.
 
-## Требования
+## Получить и запустить на другом компьютере
 
-Windows PowerShell, Docker Desktop с Linux containers и Compose v2.
-Проверены Flutter 3.38.3 / Dart 3.10.1, Android SDK и JDK 17; Android минимум API 24.
-Для backend вне Docker нужен Node.js 22.13+ либо 24+, для CV рекомендуется
-Docker с Python 3.11. CLI detect_image.py использует стандартную библиотеку Python.
-iOS требует macOS/Xcode и здесь не собирался.
+Нужны Git, Docker Desktop с Linux containers и Compose v2. Для сборки Android — Flutter и Android SDK. Проверенная среда: Flutter 3.38.3 / Dart 3.10.1, JDK 17; минимальный Android API 24. iOS требует macOS/Xcode и в текущем цикле не собирался.
 
-## Запуск серверов
-
-Из D:\EasyPark:
+Команды ниже рассчитаны на PowerShell:
 
 ```powershell
-# Только если .env ещё отсутствует:
+git clone https://github.com/penxick/EasyParkA.git D:\EasyPark
+Set-Location D:\EasyPark
 if (-not (Test-Path .env)) { Copy-Item .env.example .env }
-# Отредактируйте .env: задайте POSTGRES_PASSWORD, JWT_SECRET, ADMIN_LOGIN и ADMIN_PASSWORD.
-# JWT_SECRET — случайный секрет не менее 32 байт, не значение-заглушка.
+```
+
+Перед запуском отредактируйте `.env`:
+
+| Переменная | Что указать |
+| --- | --- |
+| `POSTGRES_PASSWORD` | Собственный пароль новой БД |
+| `JWT_SECRET` | Случайный секрет не менее 32 байт, не заглушка |
+| `ADMIN_LOGIN` | Логин первоначального администратора, например `admin` |
+| `ADMIN_PASSWORD` | Собственный пароль 12–128 символов, не `change_me` |
+| `POSTGRES_PORT` | Порт БД на компьютере; по умолчанию `55432` |
+| `BACKEND_PORT` / `CV_PORT` | По умолчанию `3000` / `8000` |
+
+Пароли с `#` заключайте в одинарные кавычки. Не публикуйте `.env`, токены и действующие пароли.
+
+### Backend и PostgreSQL
+
+```powershell
 docker compose config --quiet
-docker compose up -d --build --wait
+docker compose up -d --build --wait backend
 docker compose exec -T backend npm run seed
 docker compose ps
 Invoke-RestMethod http://127.0.0.1:3000/health
+```
+
+Ожидаемый ответ: `{"status":"ok","service":"easypark-backend"}`. При другом `BACKEND_PORT` измените URL.
+
+Backend автоматически применяет миграции перед запуском. Seed необязателен: создаёт демопарковки и места без перезаписи существующих записей. Системный ADMIN создаётся при отсутствии аккаунта; повторный запуск не заменяет его пароль. Изменение `ADMIN_PASSWORD` в `.env` само по себе не сбрасывает пароль существующего администратора.
+
+PostgreSQL хранит данные в Docker volume. Пользователи и бронирования не входят в Git: новая установка получает новую БД, а не копию домашней. Изменение `POSTGRES_PASSWORD` в `.env` не меняет пароль уже созданной БД.
+
+### Необязательный CV-service
+
+```powershell
+docker compose up -d --build --wait cv-service
 Invoke-RestMethod http://127.0.0.1:8000/health
+python cv-service/tools/detect_image.py "D:\Pictures\parking.jpg"
 ```
 
-Backend и CV возвращают status=ok. При смене портов в .env измените URL.
-Опубликованы только локальные порты: backend 3000, CV 8000, PostgreSQL 55432.
-Первоначальная сборка CV скачивает зависимости и официальные веса с проверкой
-SHA-256; при обычном запуске модель уже находится в образе.
+Первая сборка скачивает зависимости и веса. [Контракт CV, ограничения и собственные модели](cv-service/README.md).
 
-Backend автоматически выполняет четыре миграции перед запуском HTTP; ошибка
-миграции останавливает запуск. synchronize и migrationsRun отключены.
-Миграции создают users, parkings, parking_spaces и reservations с ограничениями.
-Повторная ручная проверка:
+### Остановка и обновление
 
 ```powershell
-docker compose exec -T backend npm run migration:run
+# Остановка с сохранением БД:
+docker compose stop
+
+# После получения изменений backend:
+git pull --ff-only
+docker compose up -d --build --wait backend
 ```
 
-Seed вручную создаёт три демопарковки и по 20 мест без перезаписи существующих
-записей. Учётные записи создаются через приложение, общего пароля нет.
-PostgreSQL хранит данные в volume easypark_postgres_data. Изменение пароля в .env
-не меняет пароль уже созданной БД.
+`docker compose down -v` удаляет данные PostgreSQL — для обновления проекта эту команду не используйте.
 
-```powershell
-docker compose logs --tail 100
-docker compose down
-```
-
-Обычный down сохраняет данные; down -v удаляет том и для обычной остановки не нужен.
-
-## Android
+## Android: запуск и APK
 
 ```powershell
 Set-Location D:\EasyPark\mobile
 flutter pub get
 flutter doctor
-flutter emulators --launch Pixel_7
 flutter devices
 flutter run -d <device-id> --dart-define=API_BASE_URL=http://10.0.2.2:3000/api/
 ```
 
-Используйте имя доступного у вас AVD вместо Pixel_7. Адрес 10.0.2.2 ведёт с
-Android Emulator на компьютер с Docker. Карта требует интернета для OSM-плиток.
-После входа USER доступны карта, бронирования и профиль; ADMIN открывает Dashboard.
-
-Финальная локальная сборка обычного приложения:
+Замените `<device-id>` идентификатором из `flutter devices`. Адрес `10.0.2.2` ведёт из Android Emulator на компьютер с backend. На телефоне нужен доступный ему адрес — настройте его в приложении.
 
 ```powershell
 flutter build apk --debug --no-pub --dart-define=API_BASE_URL=http://10.0.2.2:3000/api/
 adb install -r build/app/outputs/flutter-apk/app-debug.apk
 ```
 
-APK: `mobile/build/app/outputs/flutter-apk/app-debug.apk`.
-Это debug APK для локального MVP, не пакет для публикации. В release-конфигурации
-пока используется debug signing; перед публикацией потребуются собственная
-подпись и HTTPS API. Production-адрес не задан. API_BASE_URL встраивается при
-сборке, изменение .env сервера не меняет адрес внутри APK.
-Для физического устройства нужен доступный ему backend или USB adb reverse
-и отдельная сборка с API_BASE_URL=http://127.0.0.1:3000/api/.
+Результат: `mobile/build/app/outputs/flutter-apk/app-debug.apk`. `API_BASE_URL` задаёт адрес по умолчанию; сохранённый в настройках адрес имеет приоритет. Изменение серверного `.env` не меняет адрес приложения.
 
-## CV
+[Метаданные сборки 1.2.2+5](releases/1.2.2/README.md). [Ссылка на папку готовых APK](releases/APKDownloadsLink.md). APK не хранится в Git. Загрузка последнего APK на GitHub Releases завершилась сетевыми ошибками, поэтому наличие файла там не подтверждено; проект можно собрать приведённой командой. Указанные в отчётах пути `D:\EasyPark\releases\...` относятся к компьютеру сборки.
+
+Это debug APK, не релиз для магазина. Для публикации нужны собственная подпись и производственная конфигурация; текущая release-конфигурация использует debug signing.
+
+## Телефон или ноутбук через Cloudflare Tunnel
+
+Backend и туннель должны работать на домашнем компьютере. На другом устройстве Docker не нужен, если приложение подключено к этому backend.
+
+1. Запустите туннель к `http://127.0.0.1:3000` установленным `cloudflared`:
+
+   ```powershell
+   cloudflared tunnel --url http://127.0.0.1:3000
+   ```
+
+2. Скопируйте выданный HTTPS-адрес. Quick Tunnel может выдавать новый адрес при каждом запуске.
+3. В приложении откройте шестерёнку на экране входа или настройки профиля.
+4. Введите `https://<ваш-туннель>.trycloudflare.com/api/`. Версия 1.2.2 также принимает домен без `/api/` и нормализует его.
+5. Нажмите «Проверить подключение», затем «Сохранить» и войдите в аккаунт домашнего backend.
+
+При успешной смене сервера прежний JWT удаляется. При неудачной проверке адрес и авторизация сохраняются. Токен старого сервера не передаётся новому.
+
+| Действие | Метод и адрес |
+| --- | --- |
+| Проверка | `GET https://<сервер>/health` |
+| Вход | `POST https://<сервер>/api/auth/login` |
+| Регистрация | `POST https://<сервер>/api/auth/register` |
+| Парковки | `GET https://<сервер>/api/parkings` с JWT |
+
+Успешная проверка требует HTTP 200 и JSON EasyPark. `/api/health` не используется. Открытие адреса входа браузером выполняет GET и не проверяет POST-маршрут авторизации.
+
+В debug-сборке запросы входа/регистрации выводят безопасную строку `EasyPark auth HTTP`: метод, URL без query, статус, категорию ошибки и время. Пароли, JWT, email и тела запросов не логируются. Отключение при сборке: `--dart-define=API_DIAGNOSTICS=false`.
+
+**Проверка входа через актуальный Cloudflare Tunnel на физическом телефоне ожидает ручного подтверждения.** [Диагностика и исправление URL](docs/cloudflare-auth-fix.md).
+
+## Бронирование и фактический таймер
+
+«Запланировать» принимает ручную длительность от 1 до 1440 минут. «По счётчику» не требует длительности. Стоимость рассчитывается по почасовому тарифу с округлением до копейки; тариф сохраняется в сессии, поэтому последующее изменение цены не переписывает её историю.
+
+Создание сессии → ожидание прибытия → подтверждённое прибытие → таймер → запрос завершения → подтверждённый выезд → итоговая стоимость.
+
+Создание брони не запускает фактический таймер. Кнопка завершения не освобождает физически занятое место: таймер продолжается до подтверждения выезда. После перезапуска клиента время восстанавливается с backend. Старые бронирования и поля прежнего тарифа сохранены для совместимости.
+
+Для демонстрации, пока нет автоматических событий камеры:
+
+1. Укажите в `.env` `DEMO_PARKING_EVENTS_ENABLED=true` и пересоздайте backend командой `docker compose up -d backend`.
+2. С JWT администратора отправьте `POST /api/reservations/<id>/demo-event` с JSON `{"event":"ARRIVAL"}`.
+3. После завершения отправьте туда же `{"event":"DEPARTURE"}`.
+
+Метод по умолчанию выключен, защищён ролью ADMIN и не является интеграцией YOLO. Способ оплаты CARD/СБП и подтверждение оплаты демонстрационные; реального списания нет. [Подробный сценарий и миграции](docs/stage-booking-payment-settings.md).
+
+## Восстановление пароля и SMTP
+
+В `.env` настройте `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` и пересоздайте backend. Обычно порт `587` используется с `SMTP_SECURE=false` и STARTTLS, `465` — с `SMTP_SECURE=true`. Используйте настройки своего почтового сервиса; проверка сертификатов не отключена.
+
+На экране входа выберите восстановление пароля. Код действует 10 минут, допускает не более пяти попыток и одно успешное применение; повторная отправка ограничена минутой. После сброса старые JWT недействительны. Без SMTP приложение сообщает, что отправка не настроена. Ответ не раскрывает наличие email в БД.
+
+Реальная доставка требует настроенного SMTP и отдельно проверяется на вашей установке. Отправка асинхронная, постоянной очереди доставки нет.
+
+## Основные API
+
+Все бизнес-маршруты имеют префикс `/api`. Защищённые запросы используют `Authorization: Bearer <JWT>`.
+
+| Метод и путь | Назначение |
+| --- | --- |
+| `GET /health` | Проверка backend без JWT |
+| `POST /api/auth/register` | Регистрация USER |
+| `POST /api/auth/login` | Вход USER/ADMIN |
+| `POST /api/auth/password-reset/request` | Запрос кода |
+| `POST /api/auth/password-reset/confirm` | Подтверждение сброса |
+| `GET /api/users/me` | Профиль |
+| `GET /api/parkings` | Парковки |
+| `GET /api/parkings/:id` | Детали парковки |
+| `GET /api/parkings/:id/spaces` | Места |
+| `POST /api/reservations/sessions` | Новая сессия PLANNED/METERED |
+| `GET /api/reservations/me` | Личные сессии и история |
+| `PATCH /api/reservations/:id/finish` | Запрос завершения |
+| `PATCH /api/reservations/:id/cancel` | Отмена до прибытия для новой сессии |
+| `POST /api/reservations/:id/demo-event` | Демособытие, только ADMIN |
+
+Прежний `POST /api/reservations` сохранён для совместимости. Административные endpoints и проверки ролей описаны в [отчётах A1–A13](docs/admin/stage-a1.md).
+
+## Разработка и проверки
+
+Для backend вне Docker требуется Node.js `^22.13.0` или `>=24.0.0`. PostgreSQL должен работать, корневой `.env` — быть настроен. Не запускайте два backend на одном порту.
 
 ```powershell
-Set-Location D:\EasyPark
-python cv-service/tools/detect_image.py "D:\Pictures\parking.jpg"
-```
-
-POST /detect принимает бинарный JPEG/PNG до 5 МиБ и 12 миллионов пикселей.
-Ответ содержит vehicles с type, confidence и bbox. Пустой список — успешный
-результат. Ошибки CLI выводятся в stderr, код завершения 1; успешный JSON — stdout,
-код 0. Изображения не сохраняются сервисом.
-
-Для собственных доверенных YOLO detection весов положите файл в
-cv-service/models/best.pt, задайте MODEL_PATH=/app/models/best.pt в .env и выполните
-`docker compose up -d --force-recreate cv-service`. Каталог подключён read-only.
-По умолчанию MODEL_PATH=/app/weights/yolo11n.pt. Совместимость проверяется при
-загрузке и прогреве; при ошибке /health возвращает 503 без подмены модели.
-[Контракт, классы, ограничения и источники модели](cv-service/README.md).
-
-## API
-
-GET /health доступен без JWT; бизнес-маршруты backend имеют префикс /api.
-
-| Метод и путь                       | Назначение                                    |
-| ---------------------------------- | --------------------------------------------- |
-| POST /api/auth/register            | Регистрация                                   |
-| POST /api/auth/login               | Вход                                          |
-| GET /api/users/me                  | Профиль                                       |
-| GET /api/parkings                  | Парковки                                      |
-| GET /api/parkings/:id              | Одна парковка                                 |
-| GET /api/parkings/:id/spaces       | Схема мест                                    |
-| POST /api/reservations             | Бронирование: parkingSpaceId, durationMinutes |
-| GET /api/reservations/me           | Личные брони и история                        |
-| PATCH /api/reservations/:id/cancel | Отмена                                        |
-
-Защищённые запросы используют Authorization: Bearer <JWT>. Logout локально
-удаляет JWT из secure storage; endpoint отзыва токенов не предусмотрен.
-
-## Проверки и локальная разработка
-
-Из backend (PostgreSQL должен работать, корневой .env настроен):
-
-```powershell
+Set-Location D:\EasyPark\backend
 npm ci
-npm run format:check
-npm run lint
 npm run build
+npm run lint
 node --test test/*.test.cjs test/integration/*.test.cjs
-# Для локального сервера остановите Docker backend, чтобы освободить порт:
-npm run migration:run
-npm run start:dev
 ```
 
-Не запускайте два сервера на одном порту. Локальный backend читает DB_HOST и
-POSTGRES_PORT из корневого .env, Compose переопределяет адрес на postgres:5432.
-
-Из mobile:
+Локальный backend использует `DB_HOST` и `POSTGRES_PORT` из `.env`; Compose подключается к `postgres:5432`. Миграции для локального запуска: `npm run migration:run`, сервер: `npm run start:dev`.
 
 ```powershell
-dart format --output=none --set-exit-if-changed lib test integration_test
+Set-Location D:\EasyPark\mobile
+flutter pub get
 flutter analyze
 flutter test
 ```
 
-Из cv-service после сборки runtime-образа:
+Последние зафиксированные результаты:
 
-```powershell
-docker build -f Dockerfile.test -t easypark-cv-test .
-docker run --rm easypark-cv-test
-docker run --rm easypark-cv-test ruff check app tests tools
-```
+- Обновление бронирования: backend — 79 тестов, Flutter — 121 тест; целевые backend-проверки после завершающих изменений также прошли.
+- Исправление Cloudflare: Flutter analyze без замечаний, 43 целевых теста прошли, Android debug APK 1.2.2+5 собран; версия и applicationId проверены через aapt.
+- Это результаты разных прогонов, их не следует складывать. Полный сценарий на физическом телефоне через актуальный туннель пока не подтверждён.
 
-Этап 20: 38 backend-тестов, 78 Flutter-тестов, 30 CV-тестов, Android logout и
-Docker smoke прошли. Осталось предупреждение тестового Starlette об httpx.
-Тестовые APK не являются поставляемым APK; после Android integration test
-повторите обычный flutter build apk для восстановления приложения.
+## Документация и ограничения
 
-Не реализованы реальные платежи, остальные разделы управления во Flutter ADMIN, RTSP, WebSocket и автоматическое
-обновление занятости через CV. Функциональные примеры CV не являются оценкой
-точности на реальных парковках. Основная разработка завершена на этапе 21;
-для расширения ADMIN выполнены A1–A13, регрессионная проверка Android MVP выполнена.
+- [Бронирование, таймер, SMTP и настройки](docs/stage-booking-payment-settings.md)
+- [Проверка корневого /health](docs/server-health-fix.md)
+- [Исправление Cloudflare-авторизации](docs/cloudflare-auth-fix.md)
+- [ADMIN: аудит и план](docs/admin/stage-a1.md), [аккаунт и защита](docs/admin/stage-a2.md), [регрессионные проверки](docs/admin/stage-a13.md)
+- [CV-service](cv-service/README.md)
+
+Реальные платежи, автоматические события прибытия/выезда от YOLO, RTSP и WebSocket не реализованы. SMTP требует внешней настройки. Старые отчёты этапов описывают состояние на момент их выполнения; актуальные сценарии приведены выше.
+
+
