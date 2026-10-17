@@ -34,7 +34,7 @@ MODEL_PATH = (
     / "runs"
     / "easypark_yolo26_detection"
     / "weights"
-    / "best.pt"
+    / "easypark_yolo26n_best.pt"
 )
 
 SCHEME_PATH = BASE_DIR / "parking_spaces.json"
